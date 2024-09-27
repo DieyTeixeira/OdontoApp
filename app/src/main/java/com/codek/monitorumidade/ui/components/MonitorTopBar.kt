@@ -28,7 +28,7 @@ fun MonitorTopBar(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 8.dp, start = 8.dp, end = 8.dp)
+            .padding(top = 12.dp, start = 10.dp, end = 10.dp)
             .background(
                 color = color,
                 shape = RoundedCornerShape(10.dp, 10.dp, 0.dp, 0.dp)

@@ -9,6 +9,8 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -35,6 +37,7 @@ import com.codek.monitorumidade.ui.theme.Verde
 import com.codek.monitorumidade.ui.theme.VerdeEscuro
 import androidx.compose.runtime.livedata.observeAsState
 import com.codek.monitorumidade.ui.controladores.ControladorUmidade
+import com.codek.monitorumidade.ui.theme.DarkGradient
 
 @Composable
 fun MonitorUmidadeDisplay() {
@@ -62,8 +65,8 @@ fun MonitorUmidadeDisplay() {
     Surface(
         modifier = Modifier
             .padding(16.dp)
-            .height(250.dp),
-        shape = RoundedCornerShape(10)
+            .height(500.dp),
+        shape = RoundedCornerShape(9)
     ) {
         Surface(
             modifier = Modifier
@@ -87,10 +90,15 @@ fun MonitorUmidadeDisplay() {
                     }
                     drawContent()
                 },
-            color = MaterialTheme.colorScheme.surface,
             shape = RoundedCornerShape(9)
         ) {
-            MonitorLayout()
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(DarkGradient)
+            ) {
+                MonitorLayout()
+            }
         }
     }
 }

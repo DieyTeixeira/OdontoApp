@@ -3,8 +3,6 @@ package com.codek.monitorumidade.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Divider
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,46 +12,47 @@ import androidx.compose.ui.unit.dp
 import com.codek.monitorumidade.ui.controladores.ControladorLuz
 import com.codek.monitorumidade.ui.controladores.ControladorTemperatura
 import com.codek.monitorumidade.ui.controladores.ControladorUmidade
+import com.codek.monitorumidade.ui.states.UiStateIndicator
 
 @Composable
 fun MonitorLayout() {
 
     Column(
         modifier = Modifier
-            .size(250.dp)
-            .padding(5.dp)
+            .size(500.dp)
+            .padding(5.dp),
+        verticalArrangement = Arrangement.Center
     ) {
 
-        Row(
+        Column(
             modifier = Modifier.weight(1f),
-            verticalAlignment = Alignment.CenterVertically
         ) {
 
-            Column(
-                modifier = Modifier.weight(1f)
+            Box(
+                modifier = Modifier.weight(3f)
             ) {
                 ControladorUmidade()
             }
 
             Divider(
                 modifier = Modifier
-                    .fillMaxHeight()
-                    .width(1.dp)
-                    .padding(vertical = 8.dp),
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .padding(horizontal = 8.dp),
                 color = Color.LightGray
             )
 
-            Column(
+            Row(
                 modifier = Modifier
                     .weight(1f)
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .fillMaxWidth()
             ) {
 
                 Box(
                     modifier = Modifier
                         .weight(1f)
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .padding(horizontal = 10.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     ControladorTemperatura()
@@ -61,16 +60,17 @@ fun MonitorLayout() {
 
                 Divider(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .padding(end = 8.dp),
+                        .fillMaxHeight()
+                        .width(1.dp)
+                        .padding(bottom = 8.dp),
                     color = Color.LightGray
                 )
 
                 Box(
                     modifier = Modifier
                         .weight(1f)
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .padding(horizontal = 10.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     ControladorLuz()

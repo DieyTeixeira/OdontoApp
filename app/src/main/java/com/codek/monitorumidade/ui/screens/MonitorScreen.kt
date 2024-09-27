@@ -28,6 +28,7 @@ import com.codek.monitorumidade.ui.components.MonitorAuto
 import com.codek.monitorumidade.ui.components.MonitorManual
 import com.codek.monitorumidade.ui.components.MonitorTopBar
 import com.codek.monitorumidade.ui.components.MonitorUmidadeDisplay
+import com.codek.monitorumidade.ui.theme.DarkGradient
 import com.codek.monitorumidade.ui.theme.VerdeClaro
 import com.codek.monitorumidade.ui.theme.VerdeEscuro
 
@@ -43,6 +44,7 @@ fun MonitorScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(DarkGradient)
             .padding(bottom = 8.dp)
             .clickable(
                 indication = null,
@@ -59,7 +61,7 @@ fun MonitorScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp, 0.dp, 8.dp, 8.dp)
+                .padding(10.dp, 0.dp, 10.dp, 10.dp)
                 .background(
                     color = VerdeClaro,
                     shape = RoundedCornerShape(0.dp, 0.dp, 10.dp, 10.dp)
@@ -137,7 +139,7 @@ fun MonitorScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(5.dp))
 
         MonitorUmidadeDisplay()
 

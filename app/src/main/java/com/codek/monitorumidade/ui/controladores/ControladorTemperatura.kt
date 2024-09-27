@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,38 +31,48 @@ fun ControladorTemperatura() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp, 15.dp, 8.dp, 8.dp),
+            .padding(8.dp, 8.dp, 8.dp, 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
             text = "TEMPERATURA",
-            fontSize = 12.sp,
-            color = Color.Black,
+            fontSize = 14.sp,
+            color = Color.LightGray,
+            fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(5.dp),
             textAlign = TextAlign.Center
         )
         Row(
             modifier = Modifier
-                .fillMaxHeight()
-                .width(120.dp)
-                .padding(5.dp),
+                .fillMaxWidth()
+                .height(50.dp)
+                .padding(horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.temperature),
-                contentDescription = "Temperatura",
-                modifier = Modifier.size(45.dp)
-            )
             Box(
                 modifier = Modifier
-                    .fillMaxSize(),
+                    .width(50.dp)
+                    .fillMaxHeight(),
                 contentAlignment = Alignment.Center
-            ){
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.temperature),
+                    contentDescription = "Temperatura",
+                    modifier = Modifier.size(45.dp)
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .width(50.dp)
+                    .fillMaxHeight(),
+                contentAlignment = Alignment.Center
+            ) {
                 Text(
                     text = "25°",
                     fontSize = 25.sp,
-                    color = Color.Black,
+                    color = Color.LightGray,
+                    fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(end = 10.dp)
                 )

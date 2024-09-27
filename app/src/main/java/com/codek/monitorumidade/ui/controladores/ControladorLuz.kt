@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,33 +38,44 @@ fun ControladorLuz() {
     ) {
         Text(
             text = "INTENSIDADE DE LUZ",
-            fontSize = 12.sp,
-            color = Color.Black,
+            fontSize = 14.sp,
+            color = Color.LightGray,
+            fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(5.dp),
             textAlign = TextAlign.Center
         )
         Row(
             modifier = Modifier
-                .fillMaxHeight()
-                .width(120.dp)
-                .padding(5.dp),
+                .fillMaxWidth()
+                .height(50.dp)
+                .padding(horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.sun),
-                contentDescription = "Iluminação",
-                modifier = Modifier.size(45.dp)
-            )
             Box(
                 modifier = Modifier
-                    .fillMaxSize(),
+                    .width(50.dp)
+                    .fillMaxHeight(),
                 contentAlignment = Alignment.Center
-            ){
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.sun),
+                    contentDescription = "Iluminação",
+                    modifier = Modifier.size(45.dp)
+                )
+            }
+            Spacer(modifier = Modifier.width(3.dp))
+            Box(
+                modifier = Modifier
+                    .width(50.dp)
+                    .fillMaxHeight(),
+                contentAlignment = Alignment.Center
+            ) {
                 Text(
                     text = "Baixa",
-                    fontSize = 15.sp,
-                    color = Color.Black,
+                    fontSize = 18.sp,
+                    color = Color.LightGray,
+                    fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center
                 )
             }
