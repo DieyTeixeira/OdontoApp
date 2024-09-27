@@ -2,8 +2,10 @@ package com.codek.monitorumidade.ui.viewmodels
 
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 class MonitorViewModel : ViewModel() {
 
@@ -19,5 +21,14 @@ class MonitorViewModel : ViewModel() {
 
     fun updateSelectedOption(option: String) {
         selectedOption = option
+    }
+
+    private val _sliderValue = MutableStateFlow(0f)
+    val sliderValue: StateFlow<Float> = _sliderValue
+
+    fun updateSliderValue(newValue: Float) {
+        viewModelScope.launch {
+            _sliderValue.emit(newValue)
+        }
     }
 }

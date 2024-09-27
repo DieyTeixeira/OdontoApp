@@ -1,13 +1,11 @@
-package com.codek.monitorumidade.ui.controladores
+package com.codek.monitorumidade.presentation.ui.controladores
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -17,7 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -28,7 +25,7 @@ import androidx.compose.ui.unit.sp
 import com.codek.monitorumidade.R
 
 @Composable
-fun ControladorLuz() {
+fun TemperatureController() {
 
     Column(
         modifier = Modifier
@@ -37,7 +34,7 @@ fun ControladorLuz() {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = "INTENSIDADE DE LUZ",
+            text = "TEMPERATURA",
             fontSize = 14.sp,
             color = Color.LightGray,
             fontWeight = FontWeight.Bold,
@@ -59,12 +56,11 @@ fun ControladorLuz() {
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.sun),
-                    contentDescription = "Iluminação",
+                    painter = painterResource(id = R.drawable.temperature),
+                    contentDescription = "Temperatura",
                     modifier = Modifier.size(45.dp)
                 )
             }
-            Spacer(modifier = Modifier.width(3.dp))
             Box(
                 modifier = Modifier
                     .width(50.dp)
@@ -72,11 +68,12 @@ fun ControladorLuz() {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Baixa",
-                    fontSize = 18.sp,
+                    text = "25°",
+                    fontSize = 25.sp,
                     color = Color.LightGray,
                     fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(end = 10.dp)
                 )
             }
         }
@@ -85,6 +82,6 @@ fun ControladorLuz() {
 
 @Preview
 @Composable
-private fun ControladorLuzPreview() {
-    ControladorLuz()
+private fun TemperatureControllerPreview() {
+    TemperatureController()
 }

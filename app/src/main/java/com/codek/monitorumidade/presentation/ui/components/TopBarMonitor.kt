@@ -1,4 +1,4 @@
-package com.codek.monitorumidade.ui.components
+package com.codek.monitorumidade.presentation.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,10 +19,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.codek.monitorumidade.R
-import com.codek.monitorumidade.ui.theme.VerdeEscuro
 
 @Composable
-fun MonitorTopBar(
+fun TopBarMonitor(
     color: Color
 ) {
     Column(

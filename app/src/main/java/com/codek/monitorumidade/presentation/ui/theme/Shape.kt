@@ -1,4 +1,4 @@
-package com.codek.monitorumidade.ui.theme
+package com.codek.monitorumidade.presentation.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Shapes

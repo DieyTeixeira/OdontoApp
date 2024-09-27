@@ -1,4 +1,4 @@
-package com.codek.monitorumidade.ui.components
+package com.codek.monitorumidade.presentation.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,10 +20,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.codek.monitorumidade.ui.theme.VerdeEscuro
+import com.codek.monitorumidade.presentation.ui.theme.Green700
 
 @Composable
-fun SwitchButton(
+fun SwitchMode(
     switchState: Boolean,
     checkedThumbColor: Color,
     uncheckedThumbColor: Color,
@@ -47,7 +47,7 @@ fun SwitchButton(
                     .height(20.dp)
                     .width(80.dp)
                     .background(
-                        color = if (switchState) Color.Gray else VerdeEscuro,
+                        color = if (switchState) Color.Gray else Green700,
                         shape = RoundedCornerShape(
                             topStart = 10.dp,
                             bottomStart = 10.dp,
@@ -109,7 +109,7 @@ fun SwitchButton(
                     .height(20.dp)
                     .width(80.dp)
                     .background(
-                        color = if (switchState) VerdeEscuro else Color.Gray,
+                        color = if (switchState) Green700 else Color.Gray,
                         shape = RoundedCornerShape(
                             topStart = 10.dp,
                             bottomStart = 10.dp,

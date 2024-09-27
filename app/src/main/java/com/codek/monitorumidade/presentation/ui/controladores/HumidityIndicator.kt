@@ -1,5 +1,6 @@
-package com.codek.monitorumidade.ui.controladores
+package com.codek.monitorumidade.presentation.ui.controladores
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +14,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -23,44 +30,68 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.codek.monitorumidade.R
-import com.codek.monitorumidade.ui.states.UiStateIndicator
-import com.codek.monitorumidade.ui.theme.Green500
-import com.codek.monitorumidade.ui.theme.GreenGrade
-import com.codek.monitorumidade.ui.theme.GreenGrade2
-import com.codek.monitorumidade.ui.theme.GreenGrade3
-import com.codek.monitorumidade.ui.theme.OrangeGrade
-import com.codek.monitorumidade.ui.theme.RedGrade
+import com.codek.monitorumidade.presentation.ui.theme.GreenGrade
+import com.codek.monitorumidade.presentation.ui.theme.GreenGrade2
+import com.codek.monitorumidade.presentation.ui.theme.GreenGrade3
+import com.codek.monitorumidade.presentation.ui.theme.OrangeGrade
+import com.codek.monitorumidade.presentation.ui.theme.OrangeGrade2
+import com.codek.monitorumidade.presentation.ui.theme.RedGrade
+import com.codek.monitorumidade.presentation.ui.theme.RedGrade2
+import com.codek.monitorumidade.presentation.ui.theme.YellowGrade
+import com.codek.monitorumidade.presentation.viewmodel.AgroViewModel
+import com.codek.monitorumidade.ui.viewmodels.MonitorViewModel
+import kotlinx.coroutines.delay
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
+@SuppressLint("NewApi")
 @Composable
-fun SpeedTestScreen(state: UiStateIndicator) {
+fun HumidityIndicator(
+    agroViewModel: AgroViewModel
+) {
+
+    val humidityValue by agroViewModel.humidityValue.collectAsState()
+    val timeData by agroViewModel.timeData.collectAsState()
+    var consulta by remember { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            agroViewModel.loadAgroData(1)
+
+            val currentDateTime = LocalDateTime.now()
+            val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
+            consulta = currentDateTime.format(formatter)
+
+            delay(timeData)
+        }
+    }
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
-        SpeedIndicator(state = state)
+        Box(
+            contentAlignment = Alignment.BottomCenter,
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f)
+        ) {
+            CircularIndicator(value = humidityValue?.div(100f) ?: 0f)
+            IndicatorValue(value = "${humidityValue}", consultaValue = consulta)
+        }
     }
 }
 
 @Composable
-fun SpeedIndicator(state: UiStateIndicator) {
-    Box(
-        contentAlignment = Alignment.BottomCenter,
-        modifier = Modifier
-            .fillMaxWidth()
-            .aspectRatio(1f)
-    ) {
-        CircularSpeedIndicator(state.arcValue, 240f)
-        SpeedValue(state.speed)
-    }
-}
+fun IndicatorValue(value: String, consultaValue: String) {
 
-@Composable
-fun SpeedValue(value: String) {
     Column(
         Modifier
             .fillMaxSize()
@@ -81,29 +112,36 @@ fun SpeedValue(value: String) {
         }
         Spacer(modifier = Modifier.height(10.dp))
         Text(
-            text = "48%",
+            text = "$value%",
             fontSize = 40.sp,
             color = Color.LightGray,
             fontWeight = FontWeight.Bold
         )
-        Spacer(modifier = Modifier.height(35.dp))
+        Spacer(modifier = Modifier.height(30.dp))
         Text(
             text = "UMIDADE DO SOLO",
-            fontSize = 14.sp,
+            fontSize = 18.sp,
             color = Color.LightGray,
             fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(
+            text = "Última consulta: " + consultaValue,
+            fontSize = 12.sp,
+            color = Color.LightGray,
+            fontStyle = FontStyle.Italic
         )
     }
 }
 
 @Composable
-fun CircularSpeedIndicator(value: Float, angle: Float) {
+fun CircularIndicator(value: Float) {
     Canvas(
         modifier = Modifier
             .fillMaxSize()
             .padding(20.dp)
     ) {
-        drawArcs(value, angle)
+        drawArcs(value, 240f)
     }
 }
 
@@ -116,8 +154,8 @@ fun DrawScope.drawArcs(progress: Float, maxValue: Float) {
 
     val sweepGradient = Brush.sweepGradient(
         colors = listOf(
-            RedGrade, // 0°
-            RedGrade, // 15°
+            OrangeGrade, // 0°
+            RedGrade2, // 15°
             RedGrade, // 30°
             RedGrade, // 45°
             RedGrade, // 60°
@@ -126,21 +164,21 @@ fun DrawScope.drawArcs(progress: Float, maxValue: Float) {
             RedGrade, // 105°
             RedGrade, // 120°
             RedGrade, // 135°
-            RedGrade, // 150°
-            RedGrade, // 165°
-            RedGrade, // 180°
-            OrangeGrade, // 195°
+            RedGrade2, // 150°
+            OrangeGrade, // 165°
+            OrangeGrade2, // 180°
+            YellowGrade, // 195°
             GreenGrade, // 210°
-            GreenGrade2, // 225°
-            GreenGrade3, // 240°
+            GreenGrade, // 225°
+            GreenGrade2, // 240°
             GreenGrade3, // 255°
             GreenGrade3, // 270°
             GreenGrade3, // 285°
-            GreenGrade3, // 300°
-            GreenGrade2, // 315°
+            GreenGrade2, // 300°
+            GreenGrade, // 315°
             GreenGrade, // 330°
-            OrangeGrade, // 345°
-            RedGrade, // 360°
+            YellowGrade, // 345°
+            OrangeGrade2, // 360°
         ),
         center = Offset(size.width / 2, size.height / 2) // Define o centro para a varredura do gradiente
     )
@@ -188,15 +226,8 @@ fun DrawScope.drawArcs(progress: Float, maxValue: Float) {
     drawGradient()
 }
 
-@Preview
-@Composable
-private fun SpeedIndicatorPreview() {
-    SpeedIndicator(
-        UiStateIndicator(
-            speed = "48%",
-            maxHumidity = "48%",
-            arcValue = 0.48f,
-            inProgress = false
-        )
-    )
-}
+//@Preview
+//@Composable
+//private fun HumidityIndicatorPreview() {
+//    HumidityIndicator()
+//}

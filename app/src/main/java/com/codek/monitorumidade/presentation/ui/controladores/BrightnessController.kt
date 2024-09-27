@@ -1,12 +1,12 @@
-package com.codek.monitorumidade.ui.controladores
+package com.codek.monitorumidade.presentation.ui.controladores
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.sp
 import com.codek.monitorumidade.R
 
 @Composable
-fun ControladorTemperatura() {
+fun BrightnessController() {
 
     Column(
         modifier = Modifier
@@ -35,7 +35,7 @@ fun ControladorTemperatura() {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = "TEMPERATURA",
+            text = "INTENSIDADE DE LUZ",
             fontSize = 14.sp,
             color = Color.LightGray,
             fontWeight = FontWeight.Bold,
@@ -57,11 +57,12 @@ fun ControladorTemperatura() {
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.temperature),
-                    contentDescription = "Temperatura",
+                    painter = painterResource(id = R.drawable.sun),
+                    contentDescription = "Iluminação",
                     modifier = Modifier.size(45.dp)
                 )
             }
+            Spacer(modifier = Modifier.width(3.dp))
             Box(
                 modifier = Modifier
                     .width(50.dp)
@@ -69,12 +70,11 @@ fun ControladorTemperatura() {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "25°",
-                    fontSize = 25.sp,
+                    text = "Baixa",
+                    fontSize = 18.sp,
                     color = Color.LightGray,
                     fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(end = 10.dp)
+                    textAlign = TextAlign.Center
                 )
             }
         }
@@ -83,6 +83,6 @@ fun ControladorTemperatura() {
 
 @Preview
 @Composable
-private fun ControladorTemperaturaPreview() {
-    ControladorTemperatura()
+private fun BrightnessControllerPreview() {
+    BrightnessController()
 }
