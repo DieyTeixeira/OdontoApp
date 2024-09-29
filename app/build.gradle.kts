@@ -70,4 +70,6 @@ dependencies {
     implementation(libs.converter.gson)
 
     implementation(libs.okhttp)
+
+    implementation("com.airbnb.android:lottie-compose:6.0.0")
 }

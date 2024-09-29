@@ -35,13 +35,13 @@ import com.codek.monitorumidade.presentation.ui.components.MonitorManual
 import com.codek.monitorumidade.presentation.ui.components.SwitchMode
 import com.codek.monitorumidade.presentation.ui.components.TopBarMonitor
 import com.codek.monitorumidade.presentation.ui.theme.DarkGradient
-import com.codek.monitorumidade.presentation.ui.theme.Green500
+import com.codek.monitorumidade.presentation.ui.theme.Green600
 import com.codek.monitorumidade.presentation.ui.theme.Green700
 import com.codek.monitorumidade.presentation.viewmodel.AgroViewModel
 import com.codek.monitorumidade.ui.viewmodels.MonitorViewModel
 
 @Composable
-fun MonitorAgroScreen(
+fun MonitorAgroScreen2(
     monitorViewModel: MonitorViewModel,
     agroViewModel: AgroViewModel
 ) {
@@ -65,16 +65,14 @@ fun MonitorAgroScreen(
             }
     ) {
 
-        TopBarMonitor(
-            color = Green700
-        )
+        TopBarMonitor()
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(10.dp, 0.dp, 10.dp, 10.dp)
                 .background(
-                    color = Green500,
+                    color = Green600,
                     shape = RoundedCornerShape(0.dp, 0.dp, 10.dp, 10.dp)
                 ),
             horizontalAlignment = Alignment.CenterHorizontally

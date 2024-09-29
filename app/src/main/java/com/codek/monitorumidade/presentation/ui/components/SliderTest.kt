@@ -9,8 +9,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.codek.monitorumidade.presentation.ui.theme.Green500
 import com.codek.monitorumidade.presentation.ui.theme.Green400
+import com.codek.monitorumidade.presentation.ui.theme.Green500
+import com.codek.monitorumidade.presentation.ui.theme.Green700
 import com.codek.monitorumidade.presentation.viewmodel.AgroViewModel
 import kotlin.math.roundToInt
 
@@ -37,8 +38,8 @@ fun MagneticSlider(
             steps = 3,
             modifier = Modifier.fillMaxWidth(),
             colors = SliderDefaults.colors(
-                thumbColor = Green500, // Cor do thumb
-                activeTrackColor = Green400, // Cor da parte ativa do track
+                thumbColor = Green700, // Cor do thumb
+                activeTrackColor = Green500, // Cor da parte ativa do track
                 inactiveTrackColor = Color.LightGray // Cor da parte inativa do track
             )
         )
