@@ -35,18 +35,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.codek.monitorumidade.R
-import com.codek.monitorumidade.presentation.ui.theme.GreenGrade
+import com.codek.monitorumidade.data.api.AgroApi
+import com.codek.monitorumidade.data.api.ApiCreateAgro
+import com.codek.monitorumidade.data.repository.AgroRepositoryImpl
+import com.codek.monitorumidade.presentation.ui.theme.GreenGrade1
 import com.codek.monitorumidade.presentation.ui.theme.GreenGrade2
 import com.codek.monitorumidade.presentation.ui.theme.GreenGrade3
 import com.codek.monitorumidade.presentation.ui.theme.OrangeGrade
-import com.codek.monitorumidade.presentation.ui.theme.OrangeGrade2
 import com.codek.monitorumidade.presentation.ui.theme.RedGrade
-import com.codek.monitorumidade.presentation.ui.theme.RedGrade2
-import com.codek.monitorumidade.presentation.ui.theme.YellowGrade
+import com.codek.monitorumidade.presentation.ui.theme.YellowGrade1
+import com.codek.monitorumidade.presentation.ui.theme.YellowGrade2
 import com.codek.monitorumidade.presentation.viewmodel.AgroViewModel
-import com.codek.monitorumidade.ui.viewmodels.MonitorViewModel
 import kotlinx.coroutines.delay
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -155,7 +155,7 @@ fun DrawScope.drawArcs(progress: Float, maxValue: Float) {
     val sweepGradient = Brush.sweepGradient(
         colors = listOf(
             OrangeGrade, // 0°
-            RedGrade2, // 15°
+            RedGrade, // 15°
             RedGrade, // 30°
             RedGrade, // 45°
             RedGrade, // 60°
@@ -164,21 +164,21 @@ fun DrawScope.drawArcs(progress: Float, maxValue: Float) {
             RedGrade, // 105°
             RedGrade, // 120°
             RedGrade, // 135°
-            RedGrade2, // 150°
-            OrangeGrade, // 165°
-            OrangeGrade2, // 180°
-            YellowGrade, // 195°
-            GreenGrade, // 210°
-            GreenGrade, // 225°
+            RedGrade, // 150°
+            RedGrade, // 165°
+            OrangeGrade, // 180°
+            YellowGrade2, // 195°
+            YellowGrade1, // 210°
+            GreenGrade1, // 225°
             GreenGrade2, // 240°
             GreenGrade3, // 255°
             GreenGrade3, // 270°
             GreenGrade3, // 285°
             GreenGrade2, // 300°
-            GreenGrade, // 315°
-            GreenGrade, // 330°
-            YellowGrade, // 345°
-            OrangeGrade2, // 360°
+            GreenGrade1, // 315°
+            YellowGrade1, // 330°
+            YellowGrade2, // 345°
+            OrangeGrade, // 360°
         ),
         center = Offset(size.width / 2, size.height / 2) // Define o centro para a varredura do gradiente
     )
@@ -226,8 +226,8 @@ fun DrawScope.drawArcs(progress: Float, maxValue: Float) {
     drawGradient()
 }
 
-//@Preview
-//@Composable
-//private fun HumidityIndicatorPreview() {
-//    HumidityIndicator()
-//}
+@Preview
+@Composable
+private fun HumidityIndicatorPreview() {
+    CircularIndicator(1f)
+}

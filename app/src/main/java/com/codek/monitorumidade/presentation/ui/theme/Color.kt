@@ -27,14 +27,13 @@ val GreenGradient = Brush.linearGradient(
     end = Offset(Float.POSITIVE_INFINITY, 0f)
 )
 
-val GreenGrade4 = Color(0xFF00FF00) // Verde puro
-val GreenGrade3 = Color(0xFF38FF38) // Verde claro
-val GreenGrade2 = Color(0xFF6BFF6B) // Verde suave
-val GreenGrade = Color(0xFFC0FF38) // Verde limão
-val YellowGrade = Color(0xFFFFF538) // Amarelo
-val YellowGrade2 = Color(0xFFFFE700) // Amarelo mais suave
-val OrangeGrade = Color(0xFFFF9538) // Laranja
-val RedGrade = Color(0xFFFF3838) // Vermelho
+val GreenGrade3 = Color(0xFF00FF00) // Verde
+val GreenGrade2 = Color(0xFF51FF02) // Verde suave
+val GreenGrade1 = Color(0xFFA4FD01) // Verde limão
+val YellowGrade1 = Color(0xFFF8FF00) // Amarelo
+val YellowGrade2 = Color(0xFFFFA902) // Amarelo alaranjado
+val OrangeGrade = Color(0xFFFC4F00) // Laranja
+val RedGrade = Color(0xFFFD0100) // Vermelho
 
 val DarkGradient = Brush.verticalGradient(
     colors = listOf(DarkColor2, DarkColor)
