@@ -1,6 +1,8 @@
 package com.codek.monitorumidade.presentation.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Text
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -29,59 +32,53 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.codek.monitorumidade.R
+import kotlinx.coroutines.delay
 
 @Composable
-fun LoadingScreen() {
-    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loading_screen_animation))
+fun SplashScreen() {
+
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.splash_screen_animation))
     var isPlaying by remember { mutableStateOf(true) }
+    var loadingMessage by remember { mutableStateOf("Carregando...") }
 
     val progress by animateLottieCompositionAsState(
         composition = composition,
-        isPlaying = isPlaying
+        isPlaying = isPlaying,
+        iterations = Int.MAX_VALUE
     )
 
-    LaunchedEffect(key1 = progress) {
-        if (progress == 0f) {
-            isPlaying = true
-        }
-        if (progress == 1f) {
-            isPlaying = false
-        }
+    LaunchedEffect(Unit) {
+        delay(4000) // Simula a verificação da versão do app
+        loadingMessage = "Verificando versão do app"
+        delay(4000) // Simula a autenticação do usuário
+        loadingMessage = "Carregamento completo"
+        delay(2000) // Aguarda um pouco antes de mudar de tela
+        isPlaying = false
     }
-    Column(
+
+    Box(
         modifier = Modifier
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+            .fillMaxSize()
+            .background(color = Color(0xFF000000)),
+        contentAlignment = Alignment.Center
     ) {
-        LottieAnimation(
-            modifier = Modifier.size(300.dp),
-            composition = composition,
-            progress = { progress }
-        )
-        Spacer(modifier = Modifier.size(20.dp))
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(70.dp),
+        Column (
+            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "AGUARDE...\nEM BREVE NOVIDADES!",
-                modifier = Modifier.padding(10.dp),
-                style = TextStyle.Default.copy(
-                    fontSize = 18.sp,
-                    color = Color.White,
-                    textAlign = TextAlign.Center
-                ),
-                fontWeight = FontWeight.Bold
+        ){
+            LottieAnimation(
+                modifier = Modifier.size(300.dp),
+                composition = composition,
+                progress = { progress }
             )
+            Spacer(modifier = Modifier.height(30.dp))
+            Text(text = loadingMessage, color = Color.White)
         }
     }
 }
 
 @Preview
 @Composable
-private fun LoadingScreenPreview() {
-    LoadingScreen()
+private fun SplashScreenPreview() {
+    SplashScreen()
 }

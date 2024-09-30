@@ -38,9 +38,9 @@ import com.codek.monitorumidade.presentation.ui.theme.Green400
 import com.codek.monitorumidade.presentation.ui.theme.Green700
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
-import com.codek.monitorumidade.presentation.ui.controladores.BrightnessController
-import com.codek.monitorumidade.presentation.ui.controladores.TemperatureController
-import com.codek.monitorumidade.presentation.ui.controladores.HumidityController
+import com.codek.monitorumidade.presentation.ui.components.controladores.BrightnessController
+import com.codek.monitorumidade.presentation.ui.components.controladores.TemperatureController
+import com.codek.monitorumidade.presentation.ui.components.controladores.HumidityController
 import com.codek.monitorumidade.presentation.ui.theme.DarkGradient
 
 @Composable

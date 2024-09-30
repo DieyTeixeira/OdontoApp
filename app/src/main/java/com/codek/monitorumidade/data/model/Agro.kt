@@ -8,8 +8,3 @@ data class Agro(
     val onOff: Number,
     val acionamentos: String? = null
 )
-
-data class Acionamento(
-    val id: Int? = null,
-    val hora: String
-)

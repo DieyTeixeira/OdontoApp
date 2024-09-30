@@ -35,14 +35,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.codek.monitorumidade.data.api.AgroApi
-import com.codek.monitorumidade.data.api.ApiCreateAgro
-import com.codek.monitorumidade.data.repository.AgroRepositoryImpl
+import com.codek.monitorumidade.presentation.ui.components.Baseboard
 import com.codek.monitorumidade.presentation.ui.components.TopBarMonitor
 import com.codek.monitorumidade.presentation.ui.theme.DarkGradient
 import com.codek.monitorumidade.presentation.ui.theme.Green700
-import com.codek.monitorumidade.presentation.viewmodel.AgroViewModel
-import com.codek.monitorumidade.ui.viewmodels.MonitorViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -105,14 +101,7 @@ fun AppAgroScreen() {
             when (page) {
                 0 -> {
                     MonitorScreen(
-                        modifier = Modifier.fillMaxSize(),
-                        agroViewModel = AgroViewModel(
-                            AgroRepositoryImpl(
-                                ApiCreateAgro.createAgro(
-                                    AgroApi::class.java
-                                )
-                            )
-                        )
+                        modifier = Modifier.fillMaxSize()
                     )
                 }
                 1 -> {
@@ -124,6 +113,8 @@ fun AppAgroScreen() {
             }
         }
     }
+
+    Baseboard(color = Color.LightGray)
 }
 
 enum class HomeTabs(

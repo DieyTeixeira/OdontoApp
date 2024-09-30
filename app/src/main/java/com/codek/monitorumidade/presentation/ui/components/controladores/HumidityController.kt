@@ -1,4 +1,4 @@
-package com.codek.monitorumidade.presentation.ui.controladores
+package com.codek.monitorumidade.presentation.ui.components.controladores
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 import com.codek.monitorumidade.data.api.AgroApi
 import com.codek.monitorumidade.data.api.ApiCreateAgro
 import com.codek.monitorumidade.data.repository.AgroRepositoryImpl
-import com.codek.monitorumidade.presentation.viewmodel.AgroViewModel
+import com.codek.monitorumidade.ui.viewmodels.MonitorViewModel
 
 @Composable
 fun HumidityController() {
@@ -26,10 +26,10 @@ fun HumidityController() {
     ) {
         val apiCreateAgro = ApiCreateAgro.createAgro(AgroApi::class.java)
         val repositoryAgro = AgroRepositoryImpl(apiCreateAgro)
-        val agroViewModel = AgroViewModel(repositoryAgro)
+        val monitorViewModel = MonitorViewModel(repositoryAgro)
 
         HumidityIndicator(
-            agroViewModel = agroViewModel
+            monitorViewModel = monitorViewModel
         )
     }
 }

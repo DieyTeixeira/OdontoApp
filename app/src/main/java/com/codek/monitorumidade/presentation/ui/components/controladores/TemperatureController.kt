@@ -1,4 +1,4 @@
-package com.codek.monitorumidade.presentation.ui.controladores
+package com.codek.monitorumidade.presentation.ui.components.controladores
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement

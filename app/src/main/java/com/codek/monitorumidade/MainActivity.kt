@@ -1,32 +1,57 @@
 package com.codek.monitorumidade
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.ui.Modifier
-import com.codek.monitorumidade.data.api.AgroApi
-import com.codek.monitorumidade.data.api.ApiCreateAgro
-import com.codek.monitorumidade.data.repository.AgroRepositoryImpl
-import com.codek.monitorumidade.presentation.ui.screens.AppAgroScreen
-import com.codek.monitorumidade.presentation.ui.screens.MonitorAgroScreen2
+import androidx.compose.runtime.LaunchedEffect
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
+import com.codek.monitorumidade.presentation.navigation.appAgroScreen
+import com.codek.monitorumidade.presentation.navigation.authGraph
+import com.codek.monitorumidade.presentation.navigation.navigateToRegister
+import com.codek.monitorumidade.presentation.navigation.navigateToSignIn
+import com.codek.monitorumidade.presentation.navigation.signInScreen
+import com.codek.monitorumidade.presentation.navigation.splashScreen
+import com.codek.monitorumidade.presentation.navigation.splashScreenRoute
 import com.codek.monitorumidade.presentation.ui.theme.MonitorUmidadeTheme
-import com.codek.monitorumidade.presentation.viewmodel.AgroViewModel
-import com.codek.monitorumidade.ui.viewmodels.MonitorViewModel
+import kotlinx.coroutines.delay
+
 
 class MainActivity : ComponentActivity() {
+    @SuppressLint("NewApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             MonitorUmidadeTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize()
+
+                val navController = rememberNavController()
+
+                LaunchedEffect(Unit) {
+                    delay(10000)
+                    navController.navigateToSignIn()
+                }
+
+                NavHost(
+                    navController = navController,
+                    startDestination = splashScreenRoute
                 ) {
-                    AppAgroScreen()
+                    splashScreen()
+                    authGraph(
+                        onNavigateToSignIn = {
+                            navController.navigateToSignIn(it)
+                        },
+                        onNavigateToRegister = {
+                            navController.navigateToRegister()
+                        },
+                        onPopBackStack = { navController.popBackStack() }
+                    )
+                    signInScreen(
+                        onNavigateToRegister = { navController.navigateToRegister() }
+                    )
+                    appAgroScreen()
                 }
             }
         }

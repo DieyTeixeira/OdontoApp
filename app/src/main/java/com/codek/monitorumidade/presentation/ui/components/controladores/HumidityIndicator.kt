@@ -1,6 +1,8 @@
-package com.codek.monitorumidade.presentation.ui.controladores
+package com.codek.monitorumidade.presentation.ui.components.controladores
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -36,9 +38,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.codek.monitorumidade.R
-import com.codek.monitorumidade.data.api.AgroApi
-import com.codek.monitorumidade.data.api.ApiCreateAgro
-import com.codek.monitorumidade.data.repository.AgroRepositoryImpl
 import com.codek.monitorumidade.presentation.ui.theme.GreenGrade1
 import com.codek.monitorumidade.presentation.ui.theme.GreenGrade2
 import com.codek.monitorumidade.presentation.ui.theme.GreenGrade3
@@ -46,7 +45,7 @@ import com.codek.monitorumidade.presentation.ui.theme.OrangeGrade
 import com.codek.monitorumidade.presentation.ui.theme.RedGrade
 import com.codek.monitorumidade.presentation.ui.theme.YellowGrade1
 import com.codek.monitorumidade.presentation.ui.theme.YellowGrade2
-import com.codek.monitorumidade.presentation.viewmodel.AgroViewModel
+import com.codek.monitorumidade.ui.viewmodels.MonitorViewModel
 import kotlinx.coroutines.delay
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -54,23 +53,35 @@ import java.time.format.DateTimeFormatter
 @SuppressLint("NewApi")
 @Composable
 fun HumidityIndicator(
-    agroViewModel: AgroViewModel
+    monitorViewModel: MonitorViewModel
 ) {
 
-    val humidityValue by agroViewModel.humidityValue.collectAsState()
-    val timeData by agroViewModel.timeData.collectAsState()
+    val humidityValue by monitorViewModel.humidityValue.collectAsState()
     var consulta by remember { mutableStateOf("") }
+    var previousHumidity by remember { mutableStateOf(humidityValue?.toFloat() ?: 0f) }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(humidityValue) {
         while (true) {
-            agroViewModel.loadAgroData(1)
+            monitorViewModel.loadAgroData(1)
 
             val currentDateTime = LocalDateTime.now()
             val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
             consulta = currentDateTime.format(formatter)
 
-            delay(timeData)
+            delay(30000)
         }
+    }
+
+    val animatedHumidity by animateFloatAsState(
+        targetValue = humidityValue?.toFloat() ?: 0f,
+        animationSpec = tween(
+            durationMillis = 1000,
+            easing = { fraction -> 1 - (1 - fraction) * (1 - fraction) }
+        )
+    )
+
+    if (humidityValue?.toFloat() != previousHumidity) {
+        previousHumidity = humidityValue?.toFloat() ?: 0f
     }
 
     Column(
@@ -83,8 +94,8 @@ fun HumidityIndicator(
                 .fillMaxWidth()
                 .aspectRatio(1f)
         ) {
-            CircularIndicator(value = humidityValue?.div(100f) ?: 0f)
-            IndicatorValue(value = "${humidityValue}", consultaValue = consulta)
+            CircularIndicator(value = animatedHumidity / 100f)
+            IndicatorValue(value = "${humidityValue ?: 0}", consultaValue = consulta)
         }
     }
 }
