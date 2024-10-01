@@ -6,11 +6,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.LaunchedEffect
+import androidx.navigation.NavOptions
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.codek.monitorumidade.presentation.navigation.appAgroScreen
-import com.codek.monitorumidade.presentation.navigation.authGraph
-import com.codek.monitorumidade.presentation.navigation.navigateToRegister
+import com.codek.monitorumidade.presentation.navigation.navigateToAppAgro
 import com.codek.monitorumidade.presentation.navigation.navigateToSignIn
 import com.codek.monitorumidade.presentation.navigation.signInScreen
 import com.codek.monitorumidade.presentation.navigation.splashScreen
@@ -31,7 +31,11 @@ class MainActivity : ComponentActivity() {
 
                 LaunchedEffect(Unit) {
                     delay(10000)
-                    navController.navigateToSignIn()
+                    navController.navigateToSignIn(
+                        navOptions = NavOptions.Builder()
+                            .setPopUpTo(splashScreenRoute, inclusive = true)
+                            .build()
+                    )
                 }
 
                 NavHost(
@@ -39,19 +43,11 @@ class MainActivity : ComponentActivity() {
                     startDestination = splashScreenRoute
                 ) {
                     splashScreen()
-                    authGraph(
-                        onNavigateToSignIn = {
-                            navController.navigateToSignIn(it)
-                        },
-                        onNavigateToRegister = {
-                            navController.navigateToRegister()
-                        },
-                        onPopBackStack = { navController.popBackStack() }
-                    )
-                    signInScreen(
-                        onNavigateToRegister = { navController.navigateToRegister() }
-                    )
                     appAgroScreen()
+                    signInScreen(
+                        onSignUpClick = {},
+                        onLoginSuccess = { navController.navigateToAppAgro() }
+                    )
                 }
             }
         }

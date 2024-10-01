@@ -1,11 +1,8 @@
 package com.codek.monitorumidade.data.model
 
-class User(
-    val email: String?
-)
-
 data class Login(
-    val id: Int,
+    val id: Int? = null,
     val email: String,
-    val senha: String
+    val senha: String? = null,
+    val nome: String? = null,
 )

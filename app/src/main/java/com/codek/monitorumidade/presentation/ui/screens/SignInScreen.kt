@@ -92,8 +92,12 @@ fun SignInScreen(
         )
         /***** CAMPO USUÁRIO *****/
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = uiState.email,
+            onValueChange = uiState.onEmailChange,
+            textStyle = TextStyle.Default.copy(
+                fontSize = 16.sp,
+                color = Color.White
+            ),
             shape = RoundedCornerShape(25),
             leadingIcon = {
                 Icon(
@@ -111,8 +115,12 @@ fun SignInScreen(
         )
         /***** CAMPO SENHA *****/
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = uiState.senha,
+            onValueChange = uiState.onPasswordChange,
+            textStyle = TextStyle.Default.copy(
+                fontSize = 16.sp,
+                color = Color.White
+            ),
             shape = RoundedCornerShape(25),
             leadingIcon = {
                 Icon(

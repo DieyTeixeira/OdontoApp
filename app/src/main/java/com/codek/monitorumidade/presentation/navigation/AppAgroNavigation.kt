@@ -5,6 +5,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.codek.monitorumidade.presentation.ui.screens.AppAgroScreen
 
@@ -20,6 +21,8 @@ fun NavGraphBuilder.appAgroScreen() {
     }
 }
 
-fun NavHostController.navigateToAppAgro() {
-    navigate(appAgroRoute)
+fun NavHostController.navigateToAppAgro(
+    navOptions: NavOptions? = null
+) {
+    navigate(appAgroRoute, navOptions)
 }

@@ -1,8 +1,9 @@
 package com.codek.monitorumidade.presentation.viewmodel
 
+import android.util.Log
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import com.codek.monitorumidade.data.model.Login
 import com.codek.monitorumidade.data.repository.LoginRepository
 import com.codek.monitorumidade.presentation.states.SignInUiState
 import kotlinx.coroutines.delay
@@ -11,10 +12,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 class SignInViewModel(
-    private val loginRepository: LoginRepository
+    private val repository: LoginRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SignInUiState())
@@ -53,43 +53,74 @@ class SignInViewModel(
         }
     }
 
-    fun signIn() {
+    suspend fun signIn() {
+        Log.d("LoginViewModel", "signIn: Entrou aqui")
         val email = _uiState.value.email
-        val password = _uiState.value.senha
+        val senha = _uiState.value.senha
 
-        viewModelScope.launch {
-            // Validações básicas
-            if (email.isEmpty()) {
-                _uiState.update { it.copy(error = "Por favor, insira seu email.") }
-                return@launch
+        if (email.isEmpty()) {
+            _uiState.update {
+                it.copy(error = "Por favor, insira seu email.")
             }
-
-            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                _uiState.update { it.copy(error = "Formato de email inválido.") }
-                return@launch
+            Log.d("LoginViewModel", "signIn: ${_uiState.value.error}")
+            delay(3000)
+            _uiState.update {
+                it.copy(error = null)
             }
+            return
+        }
 
-            if (password.isEmpty()) {
-                _uiState.update { it.copy(error = "Por favor, insira sua senha.") }
-                return@launch
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            _uiState.update {
+                it.copy(error = "Formato de email inválido.")
             }
+            Log.d("LoginViewModel", "signIn: ${_uiState.value.error}")
+            delay(3000)
+            _uiState.update {
+                it.copy(error = null)
+            }
+            return
+        }
 
-            try {
-                // Chama o repositório para fazer login
-                val loginResponse = loginRepository.getLogin(email, password)
+        if (senha.isEmpty()) {
+            _uiState.update {
+                it.copy(error = "Por favor, insira sua senha.")
+            }
+            Log.d("LoginViewModel", "signIn: ${_uiState.value.error}")
+            delay(3000)
+            _uiState.update {
+                it.copy(error = null)
+            }
+            return
+        }
 
-                // Se o login for bem-sucedido, atualiza o estado
+        try {
+            val loginRequest = Login(email = email, senha = senha)
+            val result: List<Login> = repository.enterLogin(loginRequest)
+
+            if (result.isNotEmpty() && result[0].id != null) {
                 _signInIsSucessful.emit(true)
+            } else {
+                _uiState.update {
+                    it.copy(error = "Erro ao fazer login")
+                }
+                delay(3000)
                 _uiState.update {
                     it.copy(error = null)
                 }
-
-            } catch (e: Exception) {
-                // Trate o erro, por exemplo, mostrando uma mensagem de erro
-                _uiState.update {
-                    it.copy(error = "Falha no login. Verifique suas credenciais.")
-                }
+            }
+        } catch (e: Exception) {
+            Log.e("LoginViewModel", "Error during login: ${e.message}", e)
+            _uiState.update {
+                it.copy(error = e.message)
+            }
+            delay(3000)
+            _uiState.update {
+                it.copy(error = null)
             }
         }
+    }
+
+    suspend fun sendPasswordResetEmail() {
     }
 }
