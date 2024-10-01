@@ -6,18 +6,26 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.LaunchedEffect
-import androidx.navigation.NavOptions
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.codek.monitorumidade.presentation.navigation.appAgroScreen
-import com.codek.monitorumidade.presentation.navigation.navigateToAppAgro
-import com.codek.monitorumidade.presentation.navigation.navigateToSignIn
+import com.codek.monitorumidade.presentation.navigation.registerScreen
 import com.codek.monitorumidade.presentation.navigation.signInScreen
 import com.codek.monitorumidade.presentation.navigation.splashScreen
-import com.codek.monitorumidade.presentation.navigation.splashScreenRoute
 import com.codek.monitorumidade.presentation.ui.theme.MonitorUmidadeTheme
 import kotlinx.coroutines.delay
 
+sealed class Screen(val route: String) {
+    object Splash : Screen("splash")
+    object SignIn : Screen("signIn")
+    object AppAgro : Screen("appAgro")
+    object Register : Screen("register")
+}
+
+fun NavHostController.navigateToScreen(route: String) {
+    navigate(route)
+}
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("NewApi")
@@ -31,22 +39,21 @@ class MainActivity : ComponentActivity() {
 
                 LaunchedEffect(Unit) {
                     delay(10000)
-                    navController.navigateToSignIn(
-                        navOptions = NavOptions.Builder()
-                            .setPopUpTo(splashScreenRoute, inclusive = true)
-                            .build()
-                    )
+                    navController.navigateToScreen("signIn")
                 }
 
                 NavHost(
                     navController = navController,
-                    startDestination = splashScreenRoute
+                    startDestination = "splash"
                 ) {
                     splashScreen()
                     appAgroScreen()
                     signInScreen(
-                        onSignUpClick = {},
-                        onLoginSuccess = { navController.navigateToAppAgro() }
+                        onRegisterClick = { navController.navigateToScreen("register") },
+                        onLoginSuccess = { navController.navigateToScreen("appAgro") }
+                    )
+                    registerScreen(
+                        onCreateClick = { navController.navigateToScreen("signIn") }
                     )
                 }
             }

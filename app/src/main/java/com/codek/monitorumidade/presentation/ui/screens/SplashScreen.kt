@@ -48,12 +48,13 @@ fun SplashScreen() {
     )
 
     LaunchedEffect(Unit) {
-        delay(4000) // Simula a verificação da versão do app
+        delay(2000) // Simula a verificação da versão do app
         loadingMessage = "Verificando versão do app"
-        delay(4000) // Simula a autenticação do usuário
+        delay(2000) // Simula a autenticação do usuário
         loadingMessage = "Carregamento completo"
-        delay(2000) // Aguarda um pouco antes de mudar de tela
-        isPlaying = false
+        delay(1000) // Aguarda um pouco antes de mudar de tela
+        // Navegue para a próxima tela aqui
+        // Exemplo: navController.navigate("home")
     }
 
     Box(

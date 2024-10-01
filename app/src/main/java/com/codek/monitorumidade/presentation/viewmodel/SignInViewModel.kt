@@ -3,6 +3,7 @@ package com.codek.monitorumidade.presentation.viewmodel
 import android.util.Log
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.codek.monitorumidade.data.model.Login
 import com.codek.monitorumidade.data.repository.LoginRepository
 import com.codek.monitorumidade.presentation.states.SignInUiState
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class SignInViewModel(
     private val repository: LoginRepository
@@ -39,7 +41,7 @@ class SignInViewModel(
                     }
                     _uiState.update {
                         it.copy(
-                            senha = password,
+                            password = password,
                             passwordCharError = passwordCharError
                         )
                     }
@@ -54,45 +56,12 @@ class SignInViewModel(
     }
 
     suspend fun signIn() {
-        Log.d("LoginViewModel", "signIn: Entrou aqui")
         val email = _uiState.value.email
-        val senha = _uiState.value.senha
+        val senha = _uiState.value.password
 
-        if (email.isEmpty()) {
-            _uiState.update {
-                it.copy(error = "Por favor, insira seu email.")
-            }
-            Log.d("LoginViewModel", "signIn: ${_uiState.value.error}")
-            delay(3000)
-            _uiState.update {
-                it.copy(error = null)
-            }
-            return
-        }
-
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            _uiState.update {
-                it.copy(error = "Formato de email inválido.")
-            }
-            Log.d("LoginViewModel", "signIn: ${_uiState.value.error}")
-            delay(3000)
-            _uiState.update {
-                it.copy(error = null)
-            }
-            return
-        }
-
-        if (senha.isEmpty()) {
-            _uiState.update {
-                it.copy(error = "Por favor, insira sua senha.")
-            }
-            Log.d("LoginViewModel", "signIn: ${_uiState.value.error}")
-            delay(3000)
-            _uiState.update {
-                it.copy(error = null)
-            }
-            return
-        }
+        if (!validateField(email.isEmpty(), "Por favor, insira seu email.")) return
+        if (!validateField(!Patterns.EMAIL_ADDRESS.matcher(email).matches(), "Formato de email inválido.")) return
+        if (!validateField(senha.isEmpty(), "Por favor, insira sua senha.")) return
 
         try {
             val loginRequest = Login(email = email, senha = senha)
@@ -101,26 +70,28 @@ class SignInViewModel(
             if (result.isNotEmpty() && result[0].id != null) {
                 _signInIsSucessful.emit(true)
             } else {
-                _uiState.update {
-                    it.copy(error = "Erro ao fazer login")
-                }
-                delay(3000)
-                _uiState.update {
-                    it.copy(error = null)
-                }
+                showError("Erro ao fazer login")
             }
         } catch (e: Exception) {
-            Log.e("LoginViewModel", "Error during login: ${e.message}", e)
-            _uiState.update {
-                it.copy(error = e.message)
-            }
-            delay(3000)
-            _uiState.update {
-                it.copy(error = null)
-            }
+            showError("Usuário ou senha incorretos")
         }
     }
 
-    suspend fun sendPasswordResetEmail() {
+    private fun showError(message: String) {
+        _uiState.update { it.copy(error = message) }
+        Log.d("LoginViewModel", "signIn: $message")
+        viewModelScope.launch {
+            delay(3000)
+            _uiState.update { it.copy(error = null) }
+        }
+    }
+
+    private fun validateField(condition: Boolean, errorMessage: String): Boolean {
+        return if (condition) {
+            showError(errorMessage)
+            false
+        } else {
+            true
+        }
     }
 }

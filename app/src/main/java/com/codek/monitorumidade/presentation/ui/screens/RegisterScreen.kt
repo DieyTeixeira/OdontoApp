@@ -10,8 +10,10 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,19 +21,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -51,19 +51,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.codek.monitorumidade.R
 import com.codek.monitorumidade.presentation.states.RegisterUiState
-import com.codek.monitorumidade.presentation.states.SignInUiState
 import com.codek.monitorumidade.presentation.ui.actions.ButtonClickAction
 import com.codek.monitorumidade.presentation.ui.actions.vibrateAction
 import com.codek.monitorumidade.presentation.ui.components.Baseboard
 import com.codek.monitorumidade.presentation.ui.theme.DarkGradient
-import com.codek.monitorumidade.presentation.ui.theme.Green500
 import com.codek.monitorumidade.presentation.ui.theme.RedGrade
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("NewApi")
 @Composable
 fun RegisterScreen(
+    color: Color = Color.White,
     uiState: RegisterUiState,
-    onRegisterClick: () -> Unit,
+    onCreateClick: () -> Unit,
 ) {
     val context = LocalContext.current
     val buttonClickAction = remember { ButtonClickAction() }
@@ -83,7 +83,20 @@ fun RegisterScreen(
             .background(DarkGradient),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(100.dp))
+        Spacer(modifier = Modifier.height(60.dp))
+
+        /***** MENSAGEM DE ERRO *****/
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(40.dp)
+        ) {
+            MensagemErro(isError, uiState)
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        /***** LOGO *****/
         Image(
             painter = painterResource(id = R.drawable.logocodek_allwhite),
             contentDescription = "Logo Codek",
@@ -94,12 +107,16 @@ fun RegisterScreen(
         OutlinedTextField(
             value = uiState.email,
             onValueChange = uiState.onEmailChange,
+            textStyle = TextStyle.Default.copy(
+                fontSize = 16.sp,
+                color = color
+            ),
             shape = RoundedCornerShape(25),
             leadingIcon = {
                 Icon(
                     Icons.Filled.Person,
                     contentDescription = "ícone de usuário",
-                    tint = Color.White
+                    tint = color
                 )
             },
             label = {
@@ -107,23 +124,42 @@ fun RegisterScreen(
                     "Email",
                     color = Color.LightGray
                 )
-            }
+            },
+            modifier = Modifier
+                .fillMaxWidth(0.9f),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = color,
+                unfocusedBorderColor = color
+            )
         )
         /***** CAMPO SENHA *****/
         OutlinedTextField(
             value = uiState.password,
             onValueChange = uiState.onPasswordChange,
+            textStyle = TextStyle.Default.copy(
+                fontSize = 16.sp,
+                color = color
+            ),
             shape = RoundedCornerShape(25),
             leadingIcon = {
                 Icon(
                     Icons.Filled.Password,
                     contentDescription = "ícone de senha",
-                    tint = Color.White
+                    tint = color
                 )
             },
             label = {
-                Text("Senha", color = Color.LightGray)
+                Text(
+                    text = "Senha",
+                    color = Color.LightGray
+                )
             },
+            modifier = Modifier
+                .fillMaxWidth(0.9f),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = color,
+                unfocusedBorderColor = color
+            ),
             trailingIcon = {
                 val trailingIconModifier = Modifier.clickable {
                     uiState.onTogglePasswordVisibility()
@@ -133,14 +169,14 @@ fun RegisterScreen(
                         Icons.Filled.Visibility,
                         contentDescription = "ícone de visível",
                         modifier = trailingIconModifier,
-                        tint = Color.LightGray
+                        tint = color
                     )
                 } else {
                     Icon(
                         Icons.Filled.VisibilityOff,
                         contentDescription = "ícone de não visível",
                         modifier = trailingIconModifier,
-                        tint = Color.LightGray
+                        tint = color
                     )
                 }
             },
@@ -162,17 +198,30 @@ fun RegisterScreen(
         OutlinedTextField(
             value = uiState.confirmPassword,
             onValueChange = uiState.onConfirmPasswordChange,
+            textStyle = TextStyle.Default.copy(
+                fontSize = 16.sp,
+                color = color
+            ),
             shape = RoundedCornerShape(25),
             leadingIcon = {
                 Icon(
                     Icons.Filled.Password,
                     contentDescription = "ícone de senha",
-                    tint = Color.White
+                    tint = color
                 )
             },
             label = {
-                Text("Confirmar Senha", color = Color.LightGray)
+                Text(
+                    text = "Confirmar Senha",
+                    color = Color.LightGray
+                )
             },
+            modifier = Modifier
+                .fillMaxWidth(0.9f),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = color,
+                unfocusedBorderColor = color
+            ),
             trailingIcon = {
                 val trailingIconModifier = Modifier.clickable {
                     uiState.onTogglePasswordVisibility()
@@ -182,14 +231,14 @@ fun RegisterScreen(
                         Icons.Filled.Visibility,
                         contentDescription = "ícone de visível",
                         modifier = trailingIconModifier,
-                        tint = Color.LightGray
+                        tint = color
                     )
                 } else {
                     Icon(
                         Icons.Filled.VisibilityOff,
                         contentDescription = "ícone de não visível",
                         modifier = trailingIconModifier,
-                        tint = Color.LightGray
+                        tint = color
                     )
                 }
             },
@@ -211,18 +260,20 @@ fun RegisterScreen(
         /***** BOTÕES *****/
         Box(
             modifier = Modifier
-                .fillMaxWidth(0.7f)
+                .fillMaxWidth(0.5f)
                 .height(35.dp)
                 .background(
-                    color = Color.White,
+                    color = color,
                     shape = RoundedCornerShape(100)
                 )
                 .padding(8.dp)
                 .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() },
                     onClick = {
                         if (buttonClickAction.offClick()) {
                             focusManager.clearFocus()
-                            onRegisterClick()
+                            onCreateClick()
                         }
                     }
                 )
@@ -237,52 +288,54 @@ fun RegisterScreen(
         /***** RODAPÉ *****/
         Baseboard(color = Color.LightGray)
 
-        /***** MENSAGEM DE ERRO *****/
-        Column(
+    }
+}
+
+@Composable
+private fun MensagemErro(
+    isError: Boolean,
+    uiState: RegisterUiState,
+) {
+    AnimatedVisibility(
+        visible = isError,
+        enter = slideInVertically(
+            initialOffsetY = { fullWidth -> -fullWidth },
+            animationSpec = tween(durationMillis = 400)
+        ) + fadeIn(animationSpec = tween(durationMillis = 400)),
+        exit = slideOutVertically(
+            targetOffsetY = { fullWidth -> -fullWidth },
+            animationSpec = tween(durationMillis = 400)
+        ) + fadeOut(animationSpec = tween(durationMillis = 400))
+    ) {
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(30.dp)
-        ) {
-            AnimatedVisibility(
-                visible = isError,
-                enter = slideInVertically(
-                    initialOffsetY = { fullWidth -> -fullWidth },
-                    animationSpec = tween(durationMillis = 400)
-                ) + fadeIn(animationSpec = tween(durationMillis = 400)),
-                exit = slideOutVertically(
-                    targetOffsetY = { fullWidth -> -fullWidth },
-                    animationSpec = tween(durationMillis = 400)
-                ) + fadeOut(animationSpec = tween(durationMillis = 400))
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                        .background(
-                            brush = Brush.horizontalGradient(
-                                colors = listOf(
-                                    RedGrade.copy(alpha = 0.0f),
-                                    RedGrade.copy(alpha = 0.7f),
-                                    RedGrade,
-                                    RedGrade,
-                                    RedGrade.copy(alpha = 0.7f),
-                                    RedGrade.copy(alpha = 0.0f)
-                                )
-                            )
+                .fillMaxHeight()
+                .background(
+                    brush = Brush.horizontalGradient(
+                        colors = listOf(
+                            RedGrade.copy(alpha = 0.0f),
+                            RedGrade.copy(alpha = 0.7f),
+                            RedGrade,
+                            RedGrade,
+                            RedGrade.copy(alpha = 0.7f),
+                            RedGrade.copy(alpha = 0.0f)
                         )
-                ) {
-                    val error = uiState.error ?: ""
-                    Text(
-                        text = error,
-                        color = Color.White,
-                        style = TextStyle.Default.copy(
-                            fontSize = 16.sp,
-                            fontStyle = FontStyle.Italic
-                        ),
-                        modifier = Modifier.align(Alignment.Center)
                     )
-                }
-            }
+                )
+        ) {
+            val error = uiState.error ?: ""
+            Text(
+                text = error,
+                color = Color.White,
+                style = TextStyle.Default.copy(
+                    fontSize = 16.sp,
+                    fontStyle = FontStyle.Italic
+                ),
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .padding(5.dp)
+            )
         }
     }
 }
@@ -291,7 +344,8 @@ fun RegisterScreen(
 @Composable
 private fun RegisterScreenPreview() {
     RegisterScreen(
+        color = Color.White,
         uiState = RegisterUiState(),
-        onRegisterClick = {}
+        onCreateClick = {}
     )
 }

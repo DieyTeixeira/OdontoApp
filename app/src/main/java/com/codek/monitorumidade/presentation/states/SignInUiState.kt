@@ -2,7 +2,7 @@ package com.codek.monitorumidade.presentation.states
 
 data class SignInUiState(
     val email: String = "",
-    val senha: String = "",
+    val password: String = "",
     val passwordCharError: String? = null,
     val error: String? = null,
     val success: String? = null,

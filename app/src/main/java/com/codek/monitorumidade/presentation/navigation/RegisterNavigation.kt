@@ -1,9 +1,5 @@
 package com.codek.monitorumidade.presentation.navigation
 
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -15,42 +11,35 @@ import com.codek.monitorumidade.presentation.ui.animation.enterTransition
 import com.codek.monitorumidade.presentation.ui.animation.exitTransition
 import com.codek.monitorumidade.presentation.ui.animation.popEnterTransition
 import com.codek.monitorumidade.presentation.ui.animation.popExitTransition
+import com.codek.monitorumidade.presentation.ui.screens.RegisterScreen
 import com.codek.monitorumidade.presentation.ui.screens.SignInScreen
+import com.codek.monitorumidade.presentation.viewmodel.RegisterViewModel
 import com.codek.monitorumidade.presentation.viewmodel.SignInViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
-fun NavGraphBuilder.signInScreen(
-    onRegisterClick: () -> Unit,
-    onLoginSuccess: () -> Unit
+fun NavGraphBuilder.registerScreen(
+    onCreateClick: () -> Unit
 ) {
     composable(
-        route = Screen.SignIn.route,
+        route = Screen.Register.route,
         enterTransition = { enterTransition() },
         exitTransition = { exitTransition() },
         popEnterTransition = { popEnterTransition() },
         popExitTransition = { popExitTransition() }
     ) {
-        val viewModel = koinViewModel<SignInViewModel>()
+        val viewModel = koinViewModel<RegisterViewModel>()
         val uiState by viewModel.uiState.collectAsState()
         val scope = rememberCoroutineScope()
 
-        LaunchedEffect(viewModel.signInIsSucessful) {
-            viewModel.signInIsSucessful.collect { success ->
-                if (success) {
-                    onLoginSuccess()
+        RegisterScreen(
+            uiState = uiState,
+            onCreateClick = {
+                scope.launch {
+                    viewModel.register()
+                    onCreateClick()
                 }
             }
-        }
-
-        SignInScreen(
-            uiState = uiState,
-            onSignInClick = {
-                scope.launch {
-                    viewModel.signIn()
-                }
-            },
-            onSignUpClick = onRegisterClick
         )
     }
 }

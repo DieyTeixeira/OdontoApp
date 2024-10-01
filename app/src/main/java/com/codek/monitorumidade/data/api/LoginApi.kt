@@ -6,6 +6,9 @@ import retrofit2.http.POST
 
 interface LoginApi {
 
+    @POST("usuario") // Criar usuario
+    suspend fun createLogin(@Body loginRequest: Login): List<Login>
+
     @POST("login") // Sign In
     suspend fun enterLogin(@Body loginRequest: Login): List<Login>
 

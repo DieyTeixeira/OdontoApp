@@ -5,4 +5,6 @@ data class Login(
     val email: String,
     val senha: String? = null,
     val nome: String? = null,
+    val erro: String? = null,
+    val message: String? = null
 )

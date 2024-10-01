@@ -6,6 +6,7 @@ import com.codek.monitorumidade.data.repository.AgroRepository
 import com.codek.monitorumidade.data.repository.AgroRepositoryImpl
 import com.codek.monitorumidade.data.repository.LoginRepository
 import com.codek.monitorumidade.data.repository.LoginRepositoryImpl
+import com.codek.monitorumidade.presentation.viewmodel.RegisterViewModel
 import com.codek.monitorumidade.presentation.viewmodel.SignInViewModel
 import com.codek.monitorumidade.ui.viewmodels.MonitorViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -41,5 +42,6 @@ val repositoryModule = module {
 
 val appModule = module {
     viewModel { SignInViewModel(get()) }
+    viewModel { RegisterViewModel(get()) }
     viewModel { MonitorViewModel(get()) }
 }

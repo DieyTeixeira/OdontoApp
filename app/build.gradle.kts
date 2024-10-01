@@ -65,6 +65,7 @@ dependencies {
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
+    implementation(libs.androidx.animation)
 
     // testImplementation
     testImplementation(libs.junit)
