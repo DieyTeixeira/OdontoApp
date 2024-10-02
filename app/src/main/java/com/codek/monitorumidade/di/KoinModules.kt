@@ -8,10 +8,10 @@ import com.codek.monitorumidade.data.repository.LoginRepository
 import com.codek.monitorumidade.data.repository.LoginRepositoryImpl
 import com.codek.monitorumidade.presentation.viewmodel.RegisterViewModel
 import com.codek.monitorumidade.presentation.viewmodel.SignInViewModel
-import com.codek.monitorumidade.ui.viewmodels.MonitorViewModel
+import com.codek.monitorumidade.presentation.viewmodel.SignOutViewModel
+import com.codek.monitorumidade.ui.viewmodels.AppAgroViewModel
+import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
-import org.koin.androidx.viewmodel.dsl.viewModelOf
-import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -41,7 +41,12 @@ val repositoryModule = module {
 }
 
 val appModule = module {
-    viewModel { SignInViewModel(get()) }
+    single {
+        androidContext().getSharedPreferences("monitor_umidade_prefs", android.content.Context.MODE_PRIVATE)
+    }
+
+    viewModel { SignInViewModel(get(), get()) }
     viewModel { RegisterViewModel(get()) }
-    viewModel { MonitorViewModel(get()) }
+    viewModel { AppAgroViewModel(get()) }
+    viewModel { SignOutViewModel(get()) }
 }

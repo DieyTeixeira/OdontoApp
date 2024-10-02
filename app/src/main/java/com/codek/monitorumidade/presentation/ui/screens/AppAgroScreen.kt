@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -33,17 +34,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.codek.monitorumidade.presentation.ui.components.Baseboard
-import com.codek.monitorumidade.presentation.ui.components.TopBarMonitor
+import androidx.compose.ui.unit.sp
+import com.codek.monitorumidade.presentation.ui.components.FooterBar
+import com.codek.monitorumidade.presentation.ui.components.HeaderBar
 import com.codek.monitorumidade.presentation.ui.theme.DarkGradient
+import com.codek.monitorumidade.presentation.ui.theme.Green600
 import com.codek.monitorumidade.presentation.ui.theme.Green700
+import com.codek.monitorumidade.presentation.ui.theme.GreenGradient
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun AppAgroScreen() {
+fun AppAgroScreen(
+    onSignOutClick: () -> Unit
+) {
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { HomeTabs.entries.size })
     val selectedTabIndex = remember { derivedStateOf { pagerState.currentPage } }
@@ -53,11 +61,14 @@ fun AppAgroScreen() {
             .fillMaxSize()
             .background(DarkGradient)
     ) {
-        TopBarMonitor()
+        HeaderBar(onSignOutClick = onSignOutClick)
 
         TabRow(
             selectedTabIndex = selectedTabIndex.value,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
+            containerColor = Green700,
             indicator = { tabPositions ->
                 Box(
                     Modifier
@@ -65,27 +76,40 @@ fun AppAgroScreen() {
                         .padding(horizontal = 25.dp)
                         .height(4.dp)
                         .clip(CircleShape)
-                        .background(Green700)
+                        .background(Color.White)
                 )
             }
         ) {
             HomeTabs.entries.forEachIndexed { index, currentTab ->
                 Tab(
                     selected = selectedTabIndex.value == index,
-                    selectedContentColor = Green700,
-                    unselectedContentColor = Color.Gray,
+                    selectedContentColor = Color.White,
+                    unselectedContentColor = Color.LightGray,
                     onClick = {
                         scope.launch {
                             pagerState.animateScrollToPage(currentTab.ordinal)
                         }
                     },
-                    text = { Text(text = currentTab.text) },
-                    icon = {
-                        Icon(
-                            imageVector = if (selectedTabIndex.value == index)
-                                currentTab.selectedIcon else currentTab.unselectedIcon,
-                            contentDescription = "Tab Icon"
-                        )
+                    modifier = Modifier.height(52.dp),
+                    text = {
+                        Column(
+                            modifier = Modifier
+                                .padding(bottom = 5.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(
+                                imageVector = if (selectedTabIndex.value == index)
+                                    currentTab.selectedIcon else currentTab.unselectedIcon,
+                                contentDescription = "Tab Icon",
+                                modifier = Modifier.size(30.dp) // Ajuste do tamanho do ícone
+                            )
+                            Text(
+                                text = currentTab.text,
+                                style = TextStyle.Default.copy(
+                                    fontSize = 10.sp
+                                ),
+                                modifier = Modifier.padding(top = 0.dp) // Remove o espaçamento
+                            )
+                        }
                     }
                 )
             }
@@ -114,7 +138,7 @@ fun AppAgroScreen() {
         }
     }
 
-    Baseboard(color = Color.LightGray)
+    FooterBar(color = Color.LightGray)
 }
 
 enum class HomeTabs(
@@ -141,6 +165,8 @@ enum class HomeTabs(
 
 @Preview
 @Composable
-private fun HorizontalPagerPreview() {
-    AppAgroScreen()
+private fun AppAgroScreenPreview() {
+    AppAgroScreen(
+        onSignOutClick = {}
+    )
 }

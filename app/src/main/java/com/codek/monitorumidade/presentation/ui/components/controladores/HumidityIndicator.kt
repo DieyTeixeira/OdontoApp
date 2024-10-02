@@ -45,7 +45,7 @@ import com.codek.monitorumidade.presentation.ui.theme.OrangeGrade
 import com.codek.monitorumidade.presentation.ui.theme.RedGrade
 import com.codek.monitorumidade.presentation.ui.theme.YellowGrade1
 import com.codek.monitorumidade.presentation.ui.theme.YellowGrade2
-import com.codek.monitorumidade.ui.viewmodels.MonitorViewModel
+import com.codek.monitorumidade.ui.viewmodels.AppAgroViewModel
 import kotlinx.coroutines.delay
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -53,7 +53,7 @@ import java.time.format.DateTimeFormatter
 @SuppressLint("NewApi")
 @Composable
 fun HumidityIndicator(
-    monitorViewModel: MonitorViewModel
+    monitorViewModel: AppAgroViewModel
 ) {
 
     val humidityValue by monitorViewModel.humidityValue.collectAsState()

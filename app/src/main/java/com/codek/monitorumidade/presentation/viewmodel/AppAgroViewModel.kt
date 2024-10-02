@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class MonitorViewModel(
+class AppAgroViewModel(
     private val agroRepository: AgroRepository
 ) : ViewModel() {
 

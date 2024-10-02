@@ -13,9 +13,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -31,7 +29,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -54,7 +51,7 @@ import com.codek.monitorumidade.R
 import com.codek.monitorumidade.presentation.states.SignInUiState
 import com.codek.monitorumidade.presentation.ui.actions.ButtonClickAction
 import com.codek.monitorumidade.presentation.ui.actions.vibrateAction
-import com.codek.monitorumidade.presentation.ui.components.Baseboard
+import com.codek.monitorumidade.presentation.ui.components.FooterBar
 import com.codek.monitorumidade.presentation.ui.theme.DarkGradient
 import com.codek.monitorumidade.presentation.ui.theme.RedGrade
 
@@ -259,7 +256,7 @@ fun SignInScreen(
         }
 
         /***** RODAPÉ *****/
-        Baseboard(color = Color.LightGray)
+        FooterBar(color = Color.LightGray)
     }
 }
 

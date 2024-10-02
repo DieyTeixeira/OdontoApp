@@ -1,6 +1,7 @@
 package com.codek.monitorumidade
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -23,8 +24,12 @@ sealed class Screen(val route: String) {
     object Register : Screen("register")
 }
 
-fun NavHostController.navigateToScreen(route: String) {
-    navigate(route)
+fun NavHostController.navigateToScreen(route: String, popUpToRoute: String? = null) {
+    this.navigate(route) {
+        popUpToRoute?.let {
+            popUpTo(it) { inclusive = true }
+        }
+    }
 }
 
 class MainActivity : ComponentActivity() {
@@ -32,6 +37,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        val preferences = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+
         setContent {
             MonitorUmidadeTheme {
 
@@ -39,7 +47,14 @@ class MainActivity : ComponentActivity() {
 
                 LaunchedEffect(Unit) {
                     delay(10000)
-                    navController.navigateToScreen("signIn")
+                    val email = preferences.getString("email", null)
+                    val password = preferences.getString("password", null)
+
+                    if (email != null && password != null) {
+                        navController.navigateToScreen("appAgro", "splash")
+                    } else {
+                        navController.navigateToScreen("signIn", "splash")
+                    }
                 }
 
                 NavHost(
@@ -47,13 +62,16 @@ class MainActivity : ComponentActivity() {
                     startDestination = "splash"
                 ) {
                     splashScreen()
-                    appAgroScreen()
+                    appAgroScreen(
+                        onSignOutClick = { navController.navigateToScreen("signIn", "appAgro") }
+                    )
                     signInScreen(
                         onRegisterClick = { navController.navigateToScreen("register") },
-                        onLoginSuccess = { navController.navigateToScreen("appAgro") }
+                        onLoginSuccess = { navController.navigateToScreen("appAgro", "signIn") }
                     )
                     registerScreen(
-                        onCreateClick = { navController.navigateToScreen("signIn") }
+                        onCreateClick = { navController.navigateToScreen("signIn", "register") },
+                        onBackClick = { navController.navigateToScreen("signIn", "register") }
                     )
                 }
             }

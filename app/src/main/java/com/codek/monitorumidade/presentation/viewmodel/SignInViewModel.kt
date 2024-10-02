@@ -1,5 +1,6 @@
 package com.codek.monitorumidade.presentation.viewmodel
 
+import android.content.SharedPreferences
 import android.util.Log
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
@@ -16,7 +17,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class SignInViewModel(
-    private val repository: LoginRepository
+    private val repository: LoginRepository,
+    private val preferences: SharedPreferences
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SignInUiState())
@@ -25,8 +27,13 @@ class SignInViewModel(
     val signInIsSucessful = _signInIsSucessful.asSharedFlow()
 
     init {
+        val savedEmail = preferences.getString("email", "")
+        val savedPassword = preferences.getString("password", "")
+
         _uiState.update { currentState ->
             currentState.copy(
+                email = savedEmail ?: "",
+                password = savedPassword ?: "",
                 onEmailChange = { user ->
                     _uiState.update {
                         it.copy(email = user)
@@ -53,6 +60,12 @@ class SignInViewModel(
                 }
             )
         }
+
+        if (!savedEmail.isNullOrEmpty() && !savedPassword.isNullOrEmpty()) {
+            viewModelScope.launch {
+                signIn()
+            }
+        }
     }
 
     suspend fun signIn() {
@@ -68,6 +81,8 @@ class SignInViewModel(
             val result: List<Login> = repository.enterLogin(loginRequest)
 
             if (result.isNotEmpty() && result[0].id != null) {
+                preferences.edit().putString("email", email).apply()
+                preferences.edit().putString("password", senha).apply()
                 _signInIsSucessful.emit(true)
             } else {
                 showError("Erro ao fazer login")

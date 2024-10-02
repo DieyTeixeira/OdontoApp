@@ -26,14 +26,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import com.codek.monitorumidade.R
 
 // Definição de componente - ** RODAPÉ **
 @Composable
-fun Baseboard(
+fun FooterBar(
 //    showDialogVersion: MutableState<Boolean>,
     color: Color
 ){
@@ -104,7 +103,7 @@ fun BaseboardPreview(modifier: Modifier = Modifier) {
         modifier
             .background(color = Color(0xFF000000))
     ) {
-        Baseboard(
+        FooterBar(
 //            showDialogVersion = showDialogVersion,
             color = Color.LightGray)
     }

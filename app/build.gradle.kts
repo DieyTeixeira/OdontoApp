@@ -66,6 +66,7 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
     implementation(libs.androidx.animation)
+    implementation(libs.androidx.datastore.preferences)
 
     // testImplementation
     testImplementation(libs.junit)

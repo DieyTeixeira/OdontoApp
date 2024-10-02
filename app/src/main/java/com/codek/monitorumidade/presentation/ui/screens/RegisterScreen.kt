@@ -13,7 +13,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -53,7 +53,7 @@ import com.codek.monitorumidade.R
 import com.codek.monitorumidade.presentation.states.RegisterUiState
 import com.codek.monitorumidade.presentation.ui.actions.ButtonClickAction
 import com.codek.monitorumidade.presentation.ui.actions.vibrateAction
-import com.codek.monitorumidade.presentation.ui.components.Baseboard
+import com.codek.monitorumidade.presentation.ui.components.FooterBar
 import com.codek.monitorumidade.presentation.ui.theme.DarkGradient
 import com.codek.monitorumidade.presentation.ui.theme.RedGrade
 
@@ -64,6 +64,7 @@ fun RegisterScreen(
     color: Color = Color.White,
     uiState: RegisterUiState,
     onCreateClick: () -> Unit,
+    onBackClick: () -> Unit
 ) {
     val context = LocalContext.current
     val buttonClickAction = remember { ButtonClickAction() }
@@ -94,7 +95,28 @@ fun RegisterScreen(
             MensagemErro(isError, uiState)
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(0.85f)
+                .height(20.dp)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.arrow_back),
+                contentDescription = "Back",
+                modifier = Modifier
+                    .size(20.dp)
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() },
+                        onClick = {
+                            if (buttonClickAction.offClick()) {
+                                focusManager.clearFocus()
+                                onBackClick()
+                            }
+                        }
+                    )
+            )
+        }
 
         /***** LOGO *****/
         Image(
@@ -286,7 +308,7 @@ fun RegisterScreen(
         }
 
         /***** RODAPÉ *****/
-        Baseboard(color = Color.LightGray)
+        FooterBar(color = Color.LightGray)
 
     }
 }
@@ -346,6 +368,7 @@ private fun RegisterScreenPreview() {
     RegisterScreen(
         color = Color.White,
         uiState = RegisterUiState(),
-        onCreateClick = {}
+        onCreateClick = {},
+        onBackClick = {}
     )
 }

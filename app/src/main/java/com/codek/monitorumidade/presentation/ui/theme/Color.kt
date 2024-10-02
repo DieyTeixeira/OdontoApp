@@ -16,14 +16,14 @@ val Green100 = Color(0xFFC9FCAD)
 val Green200 = Color(0xFFAEFF82)
 val Green400 = Color(0xFF8BEB4C)
 val Green500 = Color(0xFF109653)
-val Green600 = Color(0xFF07A312)
+val Green600 = Color(0xFF149052)
 val Green700 = Color(0xFF007033)
 
 val DarkColor = Color(0xFF101522)
 val DarkColor2 = Color(0xFF202532)
 
 val GreenGradient = Brush.linearGradient(
-    colors = listOf(Green100, Green200),
+    colors = listOf(Green700, Green600),
     start = Offset(0f, 0f),
     end = Offset(Float.POSITIVE_INFINITY, 0f)
 )
