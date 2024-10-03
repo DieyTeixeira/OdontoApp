@@ -1,5 +1,7 @@
 package com.codek.monitorumidade.presentation.ui.components.controladores
 
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -7,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.codek.monitorumidade.data.api.AgroApi
@@ -17,6 +20,8 @@ import com.codek.monitorumidade.ui.viewmodels.AppAgroViewModel
 @Composable
 fun HumidityController() {
 
+    val preferences = LocalContext.current.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -26,7 +31,7 @@ fun HumidityController() {
     ) {
         val apiCreateAgro = ApiCreateAgro.createAgro(AgroApi::class.java)
         val repositoryAgro = AgroRepositoryImpl(apiCreateAgro)
-        val monitorViewModel = AppAgroViewModel(repositoryAgro)
+        val monitorViewModel = AppAgroViewModel(repositoryAgro, preferences)
 
         HumidityIndicator(
             monitorViewModel = monitorViewModel
@@ -34,8 +39,8 @@ fun HumidityController() {
     }
 }
 
-@Preview
-@Composable
-private fun HumidityControllerPreview() {
-    HumidityController()
-}
+//@Preview
+//@Composable
+//private fun HumidityControllerPreview() {
+//    HumidityController()
+//}

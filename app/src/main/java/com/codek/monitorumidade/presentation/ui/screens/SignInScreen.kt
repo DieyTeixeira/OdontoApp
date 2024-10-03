@@ -70,11 +70,11 @@ fun SignInScreen(
 
     val isError = uiState.error != null
 
-    LaunchedEffect(isError) {
-        if (isError) {
-            vibrateAction(context)
-        }
-    }
+//    LaunchedEffect(isError) {
+//        if (isError) {
+//            vibrateAction(context)
+//        }
+//    }
 
     Column(
         modifier = Modifier

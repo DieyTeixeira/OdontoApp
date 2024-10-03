@@ -12,5 +12,5 @@ data class RegisterUiState(
     val onEmailChange: (String) -> Unit = {},
     val onPasswordChange: (String) -> Unit = {},
     val onConfirmPasswordChange: (String) -> Unit = {},
-    val onTogglePasswordVisibility: () -> Unit = {}
+    val onTogglePasswordVisibility: () -> Unit = {},
 )

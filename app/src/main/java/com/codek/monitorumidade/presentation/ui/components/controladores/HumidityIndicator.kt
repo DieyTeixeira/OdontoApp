@@ -62,7 +62,7 @@ fun HumidityIndicator(
 
     LaunchedEffect(humidityValue) {
         while (true) {
-            monitorViewModel.loadAgroData(1)
+            monitorViewModel.loadAgroData()
 
             val currentDateTime = LocalDateTime.now()
             val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")

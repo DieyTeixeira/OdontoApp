@@ -1,7 +1,10 @@
 package com.codek.monitorumidade.ui.viewmodels
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codek.monitorumidade.data.model.Agro
@@ -11,8 +14,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class AppAgroViewModel(
-    private val agroRepository: AgroRepository
+    private val agroRepository: AgroRepository,
+    private val preferences: SharedPreferences
 ) : ViewModel() {
+
+    val userId = preferences.getInt("userId", 0)
 
     var selectedOption by mutableStateOf("Manual")
         private set
@@ -39,24 +45,20 @@ class AppAgroViewModel(
     val errorMessage: StateFlow<String?> = _errorMessage
 
     init {
-        Log.d("AgroViewModel", "Init called, loading data...")
-        loadAgroData(1)
+        loadAgroData()
     }
 
-    fun loadAgroData(id: Int) {
+    fun loadAgroData() {
         viewModelScope.launch {
             try {
-                Log.d("AgroViewModel", "Loading data for Agro with id: $id")
-                val response = agroRepository.getAgroById(id)
-                val responseSizeInBytes = response.toString().toByteArray().size
-                Log.d("API Response Size", "Response size: $responseSizeInBytes bytes")
-                Log.d("AgroViewModel", "Loaded data: $response")
+                Log.d("AppAgroViewModel", "Loading Agro Data for ID: $userId")
+                val response = agroRepository.getAgroById(userId)
                 _humidityValue.value = response.umidade
+                Log.d("AppAgroViewModel", "Loaded Agro Data: $response")
                 _agroData.value = response
-                Log.d("AgroViewModel", "Humidity Value set to: ${_humidityValue.value}")
+                Log.d("AppAgroViewModel", "Loaded Agro Data: ${_agroData.value}")
             } catch (e: Exception) {
                 _errorMessage.value = e.message
-                Log.e("AgroViewModel", "Error loading data: ${e.message}")
             }
         }
     }

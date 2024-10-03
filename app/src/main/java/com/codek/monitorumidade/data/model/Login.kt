@@ -8,3 +8,7 @@ data class Login(
     val erro: String? = null,
     val message: String? = null
 )
+
+data class LoginResponse(
+    val message: String?
+)

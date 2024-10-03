@@ -1,5 +1,7 @@
 package com.codek.monitorumidade.presentation.ui.components
 
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -22,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.currentCompositionLocalContext
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -42,6 +45,7 @@ import com.codek.monitorumidade.presentation.ui.components.controladores.Brightn
 import com.codek.monitorumidade.presentation.ui.components.controladores.TemperatureController
 import com.codek.monitorumidade.presentation.ui.components.controladores.HumidityController
 import com.codek.monitorumidade.presentation.ui.theme.DarkGradient
+import org.koin.android.ext.koin.androidContext
 
 @Composable
 fun GeneralDisplayMonitor() {

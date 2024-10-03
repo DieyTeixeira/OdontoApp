@@ -42,11 +42,11 @@ val repositoryModule = module {
 
 val appModule = module {
     single {
-        androidContext().getSharedPreferences("monitor_umidade_prefs", android.content.Context.MODE_PRIVATE)
+        androidContext().getSharedPreferences("user_prefs", android.content.Context.MODE_PRIVATE)
     }
 
     viewModel { SignInViewModel(get(), get()) }
     viewModel { RegisterViewModel(get()) }
-    viewModel { AppAgroViewModel(get()) }
+    viewModel { AppAgroViewModel(get(), get()) }
     viewModel { SignOutViewModel(get()) }
 }

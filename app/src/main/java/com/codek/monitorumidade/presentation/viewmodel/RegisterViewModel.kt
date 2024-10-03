@@ -3,7 +3,9 @@ package com.codek.monitorumidade.presentation.viewmodel
 import android.util.Log
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.codek.monitorumidade.data.model.Login
+import com.codek.monitorumidade.data.model.LoginResponse
 import com.codek.monitorumidade.data.repository.LoginRepository
 import com.codek.monitorumidade.presentation.states.RegisterUiState
 import com.codek.monitorumidade.presentation.states.SignInUiState
@@ -13,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class RegisterViewModel(
     private val repository: LoginRepository
@@ -32,17 +35,8 @@ class RegisterViewModel(
                     }
                 },
                 onPasswordChange = { password ->
-                    val filteredPassword = password.filter { it.isLetterOrDigit() }
-                    val passwordCharError = if (password != filteredPassword) {
-                        "A senha não deve conter caracteres especiais\nApenas letras (A-Z) e números (0-9)"
-                    } else {
-                        null
-                    }
                     _uiState.update {
-                        it.copy(
-                            password = password,
-                            passwordCharError = passwordCharError
-                        )
+                        it.copy(password = password)
                     }
                 },
                 onConfirmPasswordChange = { confirmPassword ->
@@ -68,53 +62,20 @@ class RegisterViewModel(
     }
 
     suspend fun register() {
-        Log.d("LoginViewModel", "signIn: Entrou aqui")
         val email = _uiState.value.email
         val senha = _uiState.value.password
 
-        if (email.isEmpty()) {
-            _uiState.update {
-                it.copy(error = "Por favor, insira seu email.")
-            }
-            Log.d("LoginViewModel", "signIn: ${_uiState.value.error}")
-            delay(3000)
-            _uiState.update {
-                it.copy(error = null)
-            }
-            return
-        }
-
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            _uiState.update {
-                it.copy(error = "Formato de email inválido.")
-            }
-            Log.d("LoginViewModel", "signIn: ${_uiState.value.error}")
-            delay(3000)
-            _uiState.update {
-                it.copy(error = null)
-            }
-            return
-        }
-
-        if (senha.isEmpty()) {
-            _uiState.update {
-                it.copy(error = "Por favor, insira sua senha.")
-            }
-            Log.d("LoginViewModel", "signIn: ${_uiState.value.error}")
-            delay(3000)
-            _uiState.update {
-                it.copy(error = null)
-            }
-            return
-        }
+        if (!validateField(email.isEmpty(), "Por favor, insira seu email.")) return
+        if (!validateField(!Patterns.EMAIL_ADDRESS.matcher(email).matches(), "Formato de email inválido.")) return
+        if (!validateField(!containsSequentialChars(senha), "A senha não pode conter sequências\ncomo '12345' ou 'abcdef'.")) return
 
         try {
             val loginRequest = Login(email = email, senha = senha)
-            val result: List<Login> = repository.createLogin(loginRequest)
+            val result: LoginResponse = repository.createLogin(loginRequest)
 
-            if (result[0].message != null && result[0].message == "Novo usuário criado!") {
+            if (result.message != null) {
                 _uiState.update {
-                    it.copy(error = result[0].message)
+                    it.copy(error = result.message)
                 }
                 delay(3000)
                 _uiState.update {
@@ -143,5 +104,42 @@ class RegisterViewModel(
     }
 
     suspend fun sendPasswordResetEmail() {
+    }
+
+    private fun showError(message: String) {
+        _uiState.update { it.copy(error = message) }
+        Log.d("LoginViewModel", "signIn: $message")
+        viewModelScope.launch {
+            delay(3000)
+            _uiState.update { it.copy(error = null) }
+        }
+    }
+
+    private fun validateField(condition: Boolean, errorMessage: String): Boolean {
+        return if (condition) {
+            showError(errorMessage)
+            false
+        } else {
+            true
+        }
+    }
+
+    fun containsSequentialChars(password: String): Boolean {
+        val sequences = listOf(
+            "123456789",
+            "abcdefghijklmnopqrstuvwxyz"
+        )
+
+        val lowerCasePassword = password.lowercase()
+
+        return sequences.any { sequence ->
+            if (sequence.length > 2) {
+                (0..sequence.length - 1).any { start ->
+                    lowerCasePassword.contains(sequence.substring(start))
+                }
+            } else {
+                false
+            }
+        }
     }
 }

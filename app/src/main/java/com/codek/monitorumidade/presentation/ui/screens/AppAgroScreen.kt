@@ -4,11 +4,13 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -39,6 +41,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.codek.monitorumidade.presentation.ui.components.EquipamentoDropDown
 import com.codek.monitorumidade.presentation.ui.components.FooterBar
 import com.codek.monitorumidade.presentation.ui.components.HeaderBar
 import com.codek.monitorumidade.presentation.ui.theme.DarkGradient
@@ -119,14 +122,18 @@ fun AppAgroScreen(
             state = pagerState,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 20.dp),
+                .padding(top = 10.dp),
             verticalAlignment = Alignment.Top
         ) { page ->
             when (page) {
                 0 -> {
-                    MonitorScreen(
-                        modifier = Modifier.fillMaxSize()
-                    )
+                    Column {
+                        EquipamentoDropDown()
+                        MonitorScreen(
+                            modifier = Modifier
+                                .fillMaxSize()
+                        )
+                    }
                 }
                 1 -> {
                     LoadingScreen()

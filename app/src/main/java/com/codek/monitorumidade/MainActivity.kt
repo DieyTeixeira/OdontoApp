@@ -14,6 +14,7 @@ import com.codek.monitorumidade.presentation.navigation.appAgroScreen
 import com.codek.monitorumidade.presentation.navigation.registerScreen
 import com.codek.monitorumidade.presentation.navigation.signInScreen
 import com.codek.monitorumidade.presentation.navigation.splashScreen
+import com.codek.monitorumidade.presentation.ui.components.controladores.HumidityController
 import com.codek.monitorumidade.presentation.ui.theme.MonitorUmidadeTheme
 import kotlinx.coroutines.delay
 
@@ -47,10 +48,9 @@ class MainActivity : ComponentActivity() {
 
                 LaunchedEffect(Unit) {
                     delay(10000)
-                    val email = preferences.getString("email", null)
-                    val password = preferences.getString("password", null)
+                    val isLoggedIn = preferences.getBoolean("isLoggedIn", false)
 
-                    if (email != null && password != null) {
+                    if (isLoggedIn) {
                         navController.navigateToScreen("appAgro", "splash")
                     } else {
                         navController.navigateToScreen("signIn", "splash")
@@ -70,7 +70,6 @@ class MainActivity : ComponentActivity() {
                         onLoginSuccess = { navController.navigateToScreen("appAgro", "signIn") }
                     )
                     registerScreen(
-                        onCreateClick = { navController.navigateToScreen("signIn", "register") },
                         onBackClick = { navController.navigateToScreen("signIn", "register") }
                     )
                 }

@@ -21,8 +21,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.CheckCircleOutline
 import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
@@ -39,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -46,7 +51,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.codek.monitorumidade.R
@@ -69,14 +76,23 @@ fun RegisterScreen(
     val context = LocalContext.current
     val buttonClickAction = remember { ButtonClickAction() }
     val focusManager = LocalFocusManager.current
+    val password = uiState.password
+    val confirmPassword = uiState.confirmPassword
+
+    val isPasswordValid = password.length >= 8 &&
+            containsUpperCase(password) &&
+            containsLowerCase(password) &&
+            containsDigit(password) &&
+            containsSpecialCharacter(password) &&
+            password == confirmPassword
 
     val isError = uiState.error != null
 
-    LaunchedEffect(isError) {
-        if (isError) {
-            vibrateAction(context)
-        }
-    }
+//    LaunchedEffect(isError) {
+//        if (isError) {
+//            vibrateAction(context)
+//        }
+//    }
 
     Column(
         modifier = Modifier
@@ -278,18 +294,67 @@ fun RegisterScreen(
                 modifier = Modifier.padding(8.dp)
             )
         }
+        Spacer(modifier = Modifier.height(10.dp))
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            TextWithIcon(
+                textValue = "Sua senha deve conter no mínimo:"
+            )
+            Spacer(modifier = Modifier.height(3.dp))
+            Row {
+                Column(
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    TextWithIcon(
+                        textValue = "8 caracteres",
+                        iconName = if (password.length >= 8) Icons.Filled.CheckCircle else Icons.Filled.Cancel,
+                        iconColor = if (password.length >= 8) Color.Green else Color.Red
+                    )
+                    TextWithIcon(
+                        textValue = "1 letra maiúscula",
+                        iconName = if (containsUpperCase(password)) Icons.Filled.CheckCircle else Icons.Filled.Cancel,
+                        iconColor = if (containsUpperCase(password)) Color.Green else Color.Red
+                    )
+                    TextWithIcon(
+                        textValue = "1 letra minúscula",
+                        iconName = if (containsLowerCase(password)) Icons.Filled.CheckCircle else Icons.Filled.Cancel,
+                        iconColor = if (containsLowerCase(password)) Color.Green else Color.Red
+                    )
+                }
+                Spacer(modifier = Modifier.width(10.dp))
+                Column(
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    TextWithIcon(
+                        textValue = "1 número",
+                        iconName = if (containsDigit(password)) Icons.Filled.CheckCircle else Icons.Filled.Cancel,
+                        iconColor = if (containsDigit(password)) Color.Green else Color.Red
+                    )
+                    TextWithIcon(
+                        textValue = "1 caractere especial",
+                        iconName = if (containsSpecialCharacter(password)) Icons.Filled.CheckCircle else Icons.Filled.Cancel,
+                        iconColor = if (containsSpecialCharacter(password)) Color.Green else Color.Red
+                    )
+                }
+            }
+        }
         Spacer(modifier = Modifier.height(20.dp))
+
         /***** BOTÕES *****/
         Box(
             modifier = Modifier
                 .fillMaxWidth(0.5f)
                 .height(35.dp)
                 .background(
-                    color = color,
+                    color = if (isPasswordValid) color else Color.Gray,
                     shape = RoundedCornerShape(100)
                 )
                 .padding(8.dp)
                 .clickable(
+                    enabled = isPasswordValid,
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() },
                     onClick = {
@@ -310,6 +375,35 @@ fun RegisterScreen(
         /***** RODAPÉ *****/
         FooterBar(color = Color.LightGray)
 
+    }
+}
+
+@Composable
+private fun TextWithIcon(
+    textValue: String,
+    iconName: ImageVector? = null,
+    iconColor: Color? = null
+) {
+    Spacer(modifier = Modifier.height(5.dp))
+    Row {
+        if (iconName != null && iconColor != null) {
+            Spacer(modifier = Modifier.width(8.dp))
+            Icon(
+                imageVector = iconName,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(15.dp),
+                tint = iconColor
+            )
+        }
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = textValue,
+            style = TextStyle.Default.copy(
+                fontSize = 12.sp
+            ),
+            color = Color.LightGray
+        )
     }
 }
 
@@ -354,12 +448,30 @@ private fun MensagemErro(
                     fontSize = 16.sp,
                     fontStyle = FontStyle.Italic
                 ),
+                textAlign = TextAlign.Center,
                 modifier = Modifier
                     .align(Alignment.Center)
                     .padding(5.dp)
             )
         }
     }
+}
+
+fun containsUpperCase(password: String): Boolean {
+    return password.any { it.isUpperCase() }
+}
+
+fun containsLowerCase(password: String): Boolean {
+    return password.any { it.isLowerCase() }
+}
+
+fun containsDigit(password: String): Boolean {
+    return password.any { it.isDigit() }
+}
+
+fun containsSpecialCharacter(password: String): Boolean {
+    val specialChars = "!@#$%^&*()-_=+{}[]|:;\"'<>,.?/~`"
+    return password.any { it in specialChars }
 }
 
 @Preview

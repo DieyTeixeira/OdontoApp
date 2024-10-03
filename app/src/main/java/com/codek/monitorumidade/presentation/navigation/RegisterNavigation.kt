@@ -19,7 +19,6 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 fun NavGraphBuilder.registerScreen(
-    onCreateClick: () -> Unit,
     onBackClick: () -> Unit
 ) {
     composable(
@@ -38,7 +37,6 @@ fun NavGraphBuilder.registerScreen(
             onCreateClick = {
                 scope.launch {
                     viewModel.register()
-                    onCreateClick()
                 }
             },
             onBackClick = onBackClick

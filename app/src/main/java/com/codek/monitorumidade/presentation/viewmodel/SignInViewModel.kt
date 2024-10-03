@@ -25,10 +25,18 @@ class SignInViewModel(
     val uiState = _uiState.asStateFlow()
     private val _signInIsSucessful = MutableSharedFlow<Boolean>()
     val signInIsSucessful = _signInIsSucessful.asSharedFlow()
+    private val _resultId = MutableStateFlow<Int?>(null)
+    val resultId = _resultId.asStateFlow()
 
     init {
         val savedEmail = preferences.getString("email", "")
         val savedPassword = preferences.getString("password", "")
+
+        if (!savedEmail.isNullOrEmpty() && !savedPassword.isNullOrEmpty()) {
+            viewModelScope.launch {
+                signIn()
+            }
+        }
 
         _uiState.update { currentState ->
             currentState.copy(
@@ -40,17 +48,8 @@ class SignInViewModel(
                     }
                 },
                 onPasswordChange = { password ->
-                    val filteredPassword = password.filter { it.isLetterOrDigit() }
-                    val passwordCharError = if (password != filteredPassword) {
-                        "A senha não deve conter caracteres especiais\nApenas letras (A-Z) e números (0-9)"
-                    } else {
-                        null
-                    }
                     _uiState.update {
-                        it.copy(
-                            password = password,
-                            passwordCharError = passwordCharError
-                        )
+                        it.copy(password = password)
                     }
                 },
                 onTogglePasswordVisibility = {
@@ -59,12 +58,6 @@ class SignInViewModel(
                     }
                 }
             )
-        }
-
-        if (!savedEmail.isNullOrEmpty() && !savedPassword.isNullOrEmpty()) {
-            viewModelScope.launch {
-                signIn()
-            }
         }
     }
 
@@ -80,10 +73,19 @@ class SignInViewModel(
             val loginRequest = Login(email = email, senha = senha)
             val result: List<Login> = repository.enterLogin(loginRequest)
 
-            if (result.isNotEmpty() && result[0].id != null) {
-                preferences.edit().putString("email", email).apply()
-                preferences.edit().putString("password", senha).apply()
+            if (result[0].id != null) {
+                result[0].id?.let {
+                    preferences.edit()
+                        .putString("email", email)
+                        .putString("password", senha)
+                        .putInt("userId", it)
+                        .putBoolean("isLoggedIn", true)
+                        .apply()
+                }
+                _resultId.emit(result[0].id)
                 _signInIsSucessful.emit(true)
+                Log.d("LoginViewModel", "signIn: $result")
+                Log.d("LoginViewModel", "signIn: $resultId")
             } else {
                 showError("Erro ao fazer login")
             }
