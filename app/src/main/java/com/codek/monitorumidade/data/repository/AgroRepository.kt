@@ -2,12 +2,13 @@ package com.codek.monitorumidade.data.repository
 
 import com.codek.monitorumidade.data.api.AgroApi
 import com.codek.monitorumidade.data.model.Agro
+import com.codek.monitorumidade.data.model.AgroResult
 import kotlinx.coroutines.delay
 import retrofit2.Response
 
 interface AgroRepository {
     suspend fun getAgro(): List<Agro>
-    suspend fun getAgroById(id: Int): Agro
+    suspend fun getAgroById(id: Int): List<AgroResult>
     suspend fun createAgro(agro: Agro): Agro
     suspend fun deleteAgro(id: Int)
     suspend fun updateAgro(id: Int, agro: Agro): Agro
@@ -18,7 +19,7 @@ class AgroRepositoryImpl(private val api: AgroApi) : AgroRepository {
         return api.getAgro()
     }
 
-    override suspend fun getAgroById(id: Int): Agro {
+    override suspend fun getAgroById(id: Int): List<AgroResult> {
         return api.getAgroById(id)
     }
 

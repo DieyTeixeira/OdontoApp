@@ -1,5 +1,6 @@
 package com.codek.monitorumidade.presentation.navigation
 
+import android.content.Context
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -33,13 +34,19 @@ fun NavGraphBuilder.registerScreen(
         val scope = rememberCoroutineScope()
 
         RegisterScreen(
+            viewModel = viewModel,
             uiState = uiState,
             onCreateClick = {
                 scope.launch {
                     viewModel.register()
                 }
             },
-            onBackClick = onBackClick
+            onBackClick = {
+                scope.launch {
+                    viewModel.loadSavedCredentials()
+                }
+                onBackClick()
+            }
         )
     }
 }

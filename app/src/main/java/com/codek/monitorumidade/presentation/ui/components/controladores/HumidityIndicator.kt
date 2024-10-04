@@ -1,6 +1,7 @@
 package com.codek.monitorumidade.presentation.ui.components.controladores
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
@@ -60,9 +61,10 @@ fun HumidityIndicator(
     var consulta by remember { mutableStateOf("") }
     var previousHumidity by remember { mutableStateOf(humidityValue?.toFloat() ?: 0f) }
 
-    LaunchedEffect(humidityValue) {
+    LaunchedEffect(Unit) {
         while (true) {
             monitorViewModel.loadAgroData()
+            Log.d("HumidityIndicator", "consulta")
 
             val currentDateTime = LocalDateTime.now()
             val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
@@ -73,15 +75,15 @@ fun HumidityIndicator(
     }
 
     val animatedHumidity by animateFloatAsState(
-        targetValue = humidityValue?.toFloat() ?: 0f,
+        targetValue = humidityValue ?: 0f,
         animationSpec = tween(
             durationMillis = 1000,
             easing = { fraction -> 1 - (1 - fraction) * (1 - fraction) }
         )
     )
 
-    if (humidityValue?.toFloat() != previousHumidity) {
-        previousHumidity = humidityValue?.toFloat() ?: 0f
+    if (humidityValue != previousHumidity) {
+        previousHumidity = humidityValue ?: 0f
     }
 
     Column(

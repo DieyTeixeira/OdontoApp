@@ -1,5 +1,6 @@
 package com.codek.monitorumidade.presentation.viewmodel
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import android.util.Patterns
@@ -11,6 +12,7 @@ import com.codek.monitorumidade.presentation.states.SignInUiState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -23,25 +25,23 @@ class SignInViewModel(
 
     private val _uiState = MutableStateFlow(SignInUiState())
     val uiState = _uiState.asStateFlow()
+
     private val _signInIsSucessful = MutableSharedFlow<Boolean>()
     val signInIsSucessful = _signInIsSucessful.asSharedFlow()
+
     private val _resultId = MutableStateFlow<Int?>(null)
     val resultId = _resultId.asStateFlow()
 
+    private val _showCredentialsDialog = MutableStateFlow(false)
+    val showCredentialsDialog: StateFlow<Boolean> = _showCredentialsDialog
+
+    private val _useCredentials = MutableSharedFlow<Boolean>()
+    val useCredentials = _useCredentials.asSharedFlow()
+
+
     init {
-        val savedEmail = preferences.getString("email", "")
-        val savedPassword = preferences.getString("password", "")
-
-        if (!savedEmail.isNullOrEmpty() && !savedPassword.isNullOrEmpty()) {
-            viewModelScope.launch {
-                signIn()
-            }
-        }
-
         _uiState.update { currentState ->
             currentState.copy(
-                email = savedEmail ?: "",
-                password = savedPassword ?: "",
                 onEmailChange = { user ->
                     _uiState.update {
                         it.copy(email = user)
@@ -59,6 +59,20 @@ class SignInViewModel(
                 }
             )
         }
+
+        viewModelScope.launch {
+            _useCredentials.collect { useCredentials ->
+                val email = preferences.getString("email", "") ?: ""
+                val password = preferences.getString("password", "") ?: ""
+
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        email = if (useCredentials) email else uiState.value.email,
+                        password = if (useCredentials) password else uiState.value.password
+                    )
+                }
+            }
+        }
     }
 
     suspend fun signIn() {
@@ -73,19 +87,20 @@ class SignInViewModel(
             val loginRequest = Login(email = email, senha = senha)
             val result: List<Login> = repository.enterLogin(loginRequest)
 
-            if (result[0].id != null) {
+            if (result[0].id != null && result[0].validado == true) {
                 result[0].id?.let {
                     preferences.edit()
                         .putString("email", email)
                         .putString("password", senha)
                         .putInt("userId", it)
+                        .putString("nome", result[0].nome)
                         .putBoolean("isLoggedIn", true)
                         .apply()
                 }
                 _resultId.emit(result[0].id)
                 _signInIsSucessful.emit(true)
-                Log.d("LoginViewModel", "signIn: $result")
-                Log.d("LoginViewModel", "signIn: $resultId")
+            } else if (result[0].validado == false) {
+                showError("Usuário não validado\nAcesse seu e-mail e faça a validação!")
             } else {
                 showError("Erro ao fazer login")
             }
@@ -110,5 +125,21 @@ class SignInViewModel(
         } else {
             true
         }
+    }
+
+    fun checkSavedCredentials() {
+        viewModelScope.launch {
+            val hasSavedCredentials = verifySavedCredentials()
+
+            if (hasSavedCredentials) {
+                _useCredentials.emit(true)
+            }
+        }
+    }
+
+    private fun verifySavedCredentials(): Boolean {
+        val savedEmail = preferences.getString("email", null)
+        val savedPassword = preferences.getString("password", null)
+        return savedEmail != null && savedPassword != null
     }
 }

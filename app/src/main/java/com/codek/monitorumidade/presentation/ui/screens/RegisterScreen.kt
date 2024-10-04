@@ -1,12 +1,9 @@
 package com.codek.monitorumidade.presentation.ui.screens
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
+import android.content.Context
+import android.content.SharedPreferences
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,7 +12,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,22 +22,24 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.CheckCircleOutline
 import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -51,23 +49,23 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.codek.monitorumidade.R
 import com.codek.monitorumidade.presentation.states.RegisterUiState
 import com.codek.monitorumidade.presentation.ui.actions.ButtonClickAction
-import com.codek.monitorumidade.presentation.ui.actions.vibrateAction
 import com.codek.monitorumidade.presentation.ui.components.FooterBar
+import com.codek.monitorumidade.presentation.ui.components.MensagemErro
 import com.codek.monitorumidade.presentation.ui.theme.DarkGradient
-import com.codek.monitorumidade.presentation.ui.theme.RedGrade
+import com.codek.monitorumidade.presentation.viewmodel.RegisterViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("NewApi")
 @Composable
 fun RegisterScreen(
+    viewModel: RegisterViewModel,
     color: Color = Color.White,
     uiState: RegisterUiState,
     onCreateClick: () -> Unit,
@@ -78,6 +76,8 @@ fun RegisterScreen(
     val focusManager = LocalFocusManager.current
     val password = uiState.password
     val confirmPassword = uiState.confirmPassword
+    val showDialog = remember { mutableStateOf(false) }
+    val preferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
 
     val isPasswordValid = password.length >= 8 &&
             containsUpperCase(password) &&
@@ -87,12 +87,23 @@ fun RegisterScreen(
             password == confirmPassword
 
     val isError = uiState.error != null
+    val uiStateError = uiState.error ?: ""
 
 //    LaunchedEffect(isError) {
 //        if (isError) {
 //            vibrateAction(context)
 //        }
 //    }
+
+    LaunchedEffect(Unit) {
+        viewModel.showSaveCredentialsDialog.collect { insertValue ->
+            showDialog.value = insertValue
+        }
+    }
+
+    if (showDialog.value) {
+        JanelaDialogo(showDialog, uiState, preferences, onBackClick)
+    }
 
     Column(
         modifier = Modifier
@@ -108,7 +119,7 @@ fun RegisterScreen(
                 .fillMaxWidth()
                 .height(40.dp)
         ) {
-            MensagemErro(isError, uiState)
+            MensagemErro(isError, uiStateError)
         }
 
         Row(
@@ -379,6 +390,53 @@ fun RegisterScreen(
 }
 
 @Composable
+private fun JanelaDialogo(
+    showDialog: MutableState<Boolean>,
+    uiState: RegisterUiState,
+    preferences: SharedPreferences,
+    onBackClick: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = { showDialog.value = false },
+        title = { Text(text = "USUÁRIO CRIADO COM SUCESSO!") },
+        text = {
+            Column {
+                Text(
+                    text = "Deseja salvar o email e a senha para preenchimento automático?"
+                )
+                Text(
+                    text = "Foi enviado um email de verificação para:\n${uiState.email}"
+                )
+                Text(
+                    text = "Para ter acesso a sua conta, é preciso confirmar o email.",
+                    fontStyle = FontStyle.Italic,
+                    color = Color.Red
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                preferences.edit()
+                    .putString("email", uiState.email)
+                    .putString("password", uiState.password)
+                    .putBoolean("isLoggedIn", false)
+                    .apply()
+                showDialog.value = false
+                onBackClick()
+                Log.d("RegisterScreen", "Salvo com sucesso ${uiState.email} - ${uiState.password}")
+            }) {
+                Text(text = "Sim")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = { showDialog.value = false }) {
+                Text(text = "Não")
+            }
+        }
+    )
+}
+
+@Composable
 private fun TextWithIcon(
     textValue: String,
     iconName: ImageVector? = null,
@@ -407,56 +465,6 @@ private fun TextWithIcon(
     }
 }
 
-@Composable
-private fun MensagemErro(
-    isError: Boolean,
-    uiState: RegisterUiState,
-) {
-    AnimatedVisibility(
-        visible = isError,
-        enter = slideInVertically(
-            initialOffsetY = { fullWidth -> -fullWidth },
-            animationSpec = tween(durationMillis = 400)
-        ) + fadeIn(animationSpec = tween(durationMillis = 400)),
-        exit = slideOutVertically(
-            targetOffsetY = { fullWidth -> -fullWidth },
-            animationSpec = tween(durationMillis = 400)
-        ) + fadeOut(animationSpec = tween(durationMillis = 400))
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .background(
-                    brush = Brush.horizontalGradient(
-                        colors = listOf(
-                            RedGrade.copy(alpha = 0.0f),
-                            RedGrade.copy(alpha = 0.7f),
-                            RedGrade,
-                            RedGrade,
-                            RedGrade.copy(alpha = 0.7f),
-                            RedGrade.copy(alpha = 0.0f)
-                        )
-                    )
-                )
-        ) {
-            val error = uiState.error ?: ""
-            Text(
-                text = error,
-                color = Color.White,
-                style = TextStyle.Default.copy(
-                    fontSize = 16.sp,
-                    fontStyle = FontStyle.Italic
-                ),
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(5.dp)
-            )
-        }
-    }
-}
-
 fun containsUpperCase(password: String): Boolean {
     return password.any { it.isUpperCase() }
 }
@@ -478,6 +486,7 @@ fun containsSpecialCharacter(password: String): Boolean {
 @Composable
 private fun RegisterScreenPreview() {
     RegisterScreen(
+        viewModel = viewModel(),
         color = Color.White,
         uiState = RegisterUiState(),
         onCreateClick = {},

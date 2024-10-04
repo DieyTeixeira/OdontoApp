@@ -1,16 +1,16 @@
 package com.codek.monitorumidade.presentation.ui.screens
 
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -21,43 +21,77 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Assessment
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.codek.monitorumidade.presentation.states.RegisterUiState
 import com.codek.monitorumidade.presentation.ui.components.EquipamentoDropDown
 import com.codek.monitorumidade.presentation.ui.components.FooterBar
 import com.codek.monitorumidade.presentation.ui.components.HeaderBar
 import com.codek.monitorumidade.presentation.ui.theme.DarkGradient
-import com.codek.monitorumidade.presentation.ui.theme.Green600
 import com.codek.monitorumidade.presentation.ui.theme.Green700
-import com.codek.monitorumidade.presentation.ui.theme.GreenGradient
+import com.codek.monitorumidade.presentation.viewmodel.RegisterViewModel
+import com.codek.monitorumidade.ui.viewmodels.AppAgroViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun AppAgroScreen(
+    viewModel: AppAgroViewModel,
     onSignOutClick: () -> Unit
 ) {
+    val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val registerViewModel: RegisterViewModel = viewModel()
     val pagerState = rememberPagerState(pageCount = { HomeTabs.entries.size })
     val selectedTabIndex = remember { derivedStateOf { pagerState.currentPage } }
+    val createNameDialog = remember { mutableStateOf(false) }
+    val preferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+
+    LaunchedEffect(Unit) {
+        viewModel.createName.collect { insertValue ->
+            createNameDialog.value = insertValue
+        }
+    }
+
+    if (createNameDialog.value) {
+        NomeDialogo(
+            preferences = preferences,
+            createNameDialog = createNameDialog,
+            onUpdateNameClick = { nome ->
+                registerViewModel.viewModelScope.launch {
+                    registerViewModel.insertName(nome)
+                }
+            }
+        )
+    }
 
     Column(
         modifier = Modifier
@@ -128,7 +162,11 @@ fun AppAgroScreen(
             when (page) {
                 0 -> {
                     Column {
-                        EquipamentoDropDown()
+                        EquipamentoDropDown(
+                            viewModel = viewModel,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        )
                         MonitorScreen(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -170,10 +208,50 @@ enum class HomeTabs(
     )
 }
 
+@Composable
+private fun NomeDialogo(
+    preferences: SharedPreferences,
+    createNameDialog: MutableState<Boolean>,
+    onUpdateNameClick: (String) -> Unit
+) {
+    var nome by remember { mutableStateOf("") }
+
+    AlertDialog(
+        onDismissRequest = { createNameDialog.value = false },
+        title = { Text(text = "INSIRA SEU NOME") },
+        text = {
+            OutlinedTextField(
+                value = nome,
+                onValueChange = { nome = it },
+                label = { Text(text = "Nome") },
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                preferences.edit()
+                    .putString("nome", nome)
+                    .apply()
+                createNameDialog.value = false
+                onUpdateNameClick(nome)
+            }) {
+                Text(text = "Sim")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = { createNameDialog.value = false }) {
+                Text(text = "Não")
+            }
+        }
+    )
+}
+
 @Preview
 @Composable
 private fun AppAgroScreenPreview() {
     AppAgroScreen(
+        viewModel = viewModel(),
         onSignOutClick = {}
     )
 }

@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,13 +29,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.codek.monitorumidade.ui.viewmodels.AppAgroViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EquipmentComboBoxWithLabel() {
-    val equipmentList = listOf("Equipamento 1", "Equipamento 2", "Equipamento 3")
+fun EquipmentComboBoxWithLabel(
+    equipmentList: List<String>,
+    onEquipmentSelected: (String) -> Unit
+) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedItem by remember { mutableStateOf(equipmentList[0]) }
+    var selectedItem by remember { mutableStateOf(if (equipmentList.isNotEmpty()) equipmentList[0] else "") }
 
     Box {
         Row(
@@ -103,6 +107,7 @@ fun EquipmentComboBoxWithLabel() {
                             },
                             onClick = {
                                 selectedItem = equipment
+                                onEquipmentSelected(equipment)
                                 expanded = false
                             },
                             modifier = Modifier
@@ -116,15 +121,31 @@ fun EquipmentComboBoxWithLabel() {
     }
 }
 
+@Suppress("UNCHECKED_CAST")
 @Composable
-fun EquipamentoDropDown(modifier: Modifier = Modifier) {
+fun EquipamentoDropDown(
+    viewModel: AppAgroViewModel,
+    modifier: Modifier = Modifier
+) {
+    val agroInfoList by viewModel.agroInfoList.collectAsState()
+
+    val equipmentList = agroInfoList.map { it.equipamento }
+    val humidityMap = agroInfoList.associate { it.equipamento to it.umidade }
+
     Column(modifier = modifier.padding(horizontal = 20.dp)) {
-        EquipmentComboBoxWithLabel()
+        EquipmentComboBoxWithLabel(
+            equipmentList = equipmentList as List<String>,
+            onEquipmentSelected = { selectedEquipment ->
+                humidityMap[selectedEquipment]?.let { humidity ->
+                    viewModel.updateHumidity(humidity.toFloat())
+                }
+            }
+        )
     }
 }
-
-@Preview
-@Composable
-private fun EquipmentComboBoxPreview() {
-    EquipamentoDropDown()
-}
+//
+//@Preview
+//@Composable
+//private fun EquipmentComboBoxPreview() {
+//    EquipamentoDropDown()
+//}

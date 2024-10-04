@@ -46,7 +46,7 @@ val appModule = module {
     }
 
     viewModel { SignInViewModel(get(), get()) }
-    viewModel { RegisterViewModel(get()) }
+    viewModel { RegisterViewModel(get(), get()) }
     viewModel { AppAgroViewModel(get(), get()) }
     viewModel { SignOutViewModel(get()) }
 }

@@ -26,5 +26,4 @@ class SignOutViewModel(
             _signInIsSucessful.emit(false) // Marca como não logado
         }
     }
-
 }

@@ -1,12 +1,6 @@
 package com.codek.monitorumidade.presentation.ui.screens
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -32,49 +26,54 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.codek.monitorumidade.R
 import com.codek.monitorumidade.presentation.states.SignInUiState
 import com.codek.monitorumidade.presentation.ui.actions.ButtonClickAction
-import com.codek.monitorumidade.presentation.ui.actions.vibrateAction
 import com.codek.monitorumidade.presentation.ui.components.FooterBar
+import com.codek.monitorumidade.presentation.ui.components.MensagemErro
 import com.codek.monitorumidade.presentation.ui.theme.DarkGradient
-import com.codek.monitorumidade.presentation.ui.theme.RedGrade
+import com.codek.monitorumidade.presentation.viewmodel.SignInViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("NewApi")
 @Composable
 fun SignInScreen(
+    viewModel: SignInViewModel,
     color: Color = Color.White,
     uiState: SignInUiState,
     onSignInClick: () -> Unit,
     onSignUpClick: () -> Unit
 ) {
-    val context = LocalContext.current
     val buttonClickAction = remember { ButtonClickAction() }
     val focusManager = LocalFocusManager.current
 
     val isError = uiState.error != null
+    val uiStateError = uiState.error ?: ""
 
 //    LaunchedEffect(isError) {
 //        if (isError) {
 //            vibrateAction(context)
 //        }
 //    }
+
+    LaunchedEffect(Unit) {
+        viewModel.checkSavedCredentials()
+    }
 
     Column(
         modifier = Modifier
@@ -90,7 +89,7 @@ fun SignInScreen(
                 .fillMaxWidth()
                 .height(40.dp)
         ) {
-            MensagemErro(isError, uiState)
+            MensagemErro(isError, uiStateError)
         }
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -260,58 +259,11 @@ fun SignInScreen(
     }
 }
 
-@Composable
-private fun MensagemErro(
-    isError: Boolean,
-    uiState: SignInUiState,
-) {
-    AnimatedVisibility(
-        visible = isError,
-        enter = slideInVertically(
-            initialOffsetY = { fullWidth -> -fullWidth },
-            animationSpec = tween(durationMillis = 400)
-        ) + fadeIn(animationSpec = tween(durationMillis = 400)),
-        exit = slideOutVertically(
-            targetOffsetY = { fullWidth -> -fullWidth },
-            animationSpec = tween(durationMillis = 400)
-        ) + fadeOut(animationSpec = tween(durationMillis = 400))
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    brush = Brush.horizontalGradient(
-                        colors = listOf(
-                            RedGrade.copy(alpha = 0.0f),
-                            RedGrade.copy(alpha = 0.7f),
-                            RedGrade,
-                            RedGrade,
-                            RedGrade.copy(alpha = 0.7f),
-                            RedGrade.copy(alpha = 0.0f)
-                        )
-                    )
-                )
-        ) {
-            val error = uiState.error ?: ""
-            Text(
-                text = error,
-                color = Color.White,
-                style = TextStyle.Default.copy(
-                    fontSize = 16.sp,
-                    fontStyle = FontStyle.Italic
-                ),
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(5.dp)
-            )
-        }
-    }
-}
-
 @Preview
 @Composable
 private fun SignInScreenPreview() {
     SignInScreen(
+        viewModel = viewModel(),
         color = Color.White,
         uiState = SignInUiState(),
         onSignInClick = {},

@@ -1,5 +1,7 @@
 package com.codek.monitorumidade.presentation.viewmodel
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
@@ -18,13 +20,20 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class RegisterViewModel(
-    private val repository: LoginRepository
+    private val repository: LoginRepository,
+    private val preferences: SharedPreferences
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RegisterUiState())
     val uiState = _uiState.asStateFlow()
+    private val _email = MutableStateFlow("")
+    private val _password = MutableStateFlow("")
+
     private val _signUpIsSucessful = MutableSharedFlow<Boolean>()
     val signInIsSucessful = _signUpIsSucessful.asSharedFlow()
+
+    private val _showSaveCredentialsDialog = MutableSharedFlow<Boolean>()
+    val showSaveCredentialsDialog = _showSaveCredentialsDialog.asSharedFlow()
 
     init {
         _uiState.update { currentState ->
@@ -74,41 +83,41 @@ class RegisterViewModel(
             val result: LoginResponse = repository.createLogin(loginRequest)
 
             if (result.message != null) {
-                _uiState.update {
-                    it.copy(error = result.message)
-                }
-                delay(3000)
-                _uiState.update {
-                    it.copy(error = null)
-                }
                 _signUpIsSucessful.emit(true)
+                _showSaveCredentialsDialog.emit(true)
             } else {
-                _uiState.update {
-                    it.copy(error = "Erro ao fazer login")
-                }
-                delay(3000)
-                _uiState.update {
-                    it.copy(error = null)
-                }
+                showError("Erro ao fazer login")
             }
         } catch (e: Exception) {
-            Log.e("LoginViewModel", "Error during login: ${e.message}", e)
-            _uiState.update {
-                it.copy(error = e.message)
-            }
-            delay(3000)
-            _uiState.update {
-                it.copy(error = null)
-            }
+            showError(e.message?: "Erro ao fazer login")
         }
     }
 
-    suspend fun sendPasswordResetEmail() {
+    suspend fun insertName(
+        nome: String
+    ) {
+        val id = preferences.getInt("userId", 0)
+
+        try {
+            val loginRequest = Login(nome = nome)
+            val result: LoginResponse = repository.updateName(id, loginRequest)
+
+            if (result.message == "Usuário alterado com sucesso!") {
+                showError(result.message)
+                _uiState.update { it.copy(nome = result.message) }
+                preferences.edit()
+                    .putString("nome", nome)
+                    .apply()
+            } else {
+                showError("Erro ao fazer login")
+            }
+        } catch (e: Exception) {
+            showError(e.message?: "Erro ao fazer login")
+        }
     }
 
     private fun showError(message: String) {
         _uiState.update { it.copy(error = message) }
-        Log.d("LoginViewModel", "signIn: $message")
         viewModelScope.launch {
             delay(3000)
             _uiState.update { it.copy(error = null) }
@@ -140,6 +149,19 @@ class RegisterViewModel(
             } else {
                 false
             }
+        }
+    }
+
+    fun loadSavedCredentials() {
+        val savedEmail = preferences.getString("email", null)
+        val savedPassword = preferences.getString("password", null)
+
+        if (savedEmail != null) {
+            _email.value = savedEmail
+        }
+
+        if (savedPassword != null) {
+            _password.value = savedPassword
         }
     }
 }

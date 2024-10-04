@@ -44,6 +44,7 @@ fun NavGraphBuilder.signInScreen(
         }
 
         SignInScreen(
+            viewModel = viewModel,
             uiState = uiState,
             onSignInClick = {
                 scope.launch {
