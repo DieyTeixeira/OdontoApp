@@ -1,5 +1,6 @@
 package com.codek.monitorumidade.presentation.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,7 +39,7 @@ fun EquipmentComboBoxWithLabel(
     onEquipmentSelected: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedItem by remember { mutableStateOf(if (equipmentList.isNotEmpty()) equipmentList[0] else "") }
+    var selectedItem by remember { mutableStateOf(if (equipmentList.isNotEmpty()) equipmentList[0] else "<Selecione o equipamento>") }
 
     Box {
         Row(
@@ -128,6 +129,7 @@ fun EquipamentoDropDown(
     modifier: Modifier = Modifier
 ) {
     val agroInfoList by viewModel.agroInfoList.collectAsState()
+    val humidity = viewModel.humidityValue.collectAsState()
 
     val equipmentList = agroInfoList.map { it.equipamento }
     val humidityMap = agroInfoList.associate { it.equipamento to it.umidade }
@@ -140,6 +142,12 @@ fun EquipamentoDropDown(
                     viewModel.updateHumidity(humidity.toFloat())
                 }
             }
+        )
+        Text(
+            text = "Umidade: ${humidity.value}%",
+            color = Color.White,
+            modifier = Modifier
+                .padding(horizontal = 20.dp)
         )
     }
 }
