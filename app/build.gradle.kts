@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.codek.monitorumidade"
+    namespace = "com.codek.loginapp"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.codek.monitorumidade"
+        applicationId = "com.codek.loginapp"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

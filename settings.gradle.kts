@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "MonitorUmidade"
+rootProject.name = "LoginApp"
 include(":app")
  
