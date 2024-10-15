@@ -7,8 +7,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -25,7 +23,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.codek.loginapp.presentation.ui.theme.RedError
+import com.codek.loginapp.presentation.ui.theme.LoginError
 
 @Composable
 fun MensagemErro(
@@ -50,13 +48,13 @@ fun MensagemErro(
                 .background(
                     brush = Brush.horizontalGradient(
                         colors = listOf(
-                            RedError.copy(alpha = 0.0f),
-                            RedError.copy(alpha = 0.7f),
-                            RedError,
-                            RedError,
-                            RedError,
-                            RedError.copy(alpha = 0.7f),
-                            RedError.copy(alpha = 0.0f)
+                            LoginError.copy(alpha = 0.0f),
+                            LoginError.copy(alpha = 0.7f),
+                            LoginError,
+                            LoginError,
+                            LoginError,
+                            LoginError.copy(alpha = 0.7f),
+                            LoginError.copy(alpha = 0.0f)
                         )
                     )
                 )

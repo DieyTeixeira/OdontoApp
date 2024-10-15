@@ -12,10 +12,8 @@ val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
-val RedError = Color(0xFFFD0100)
-
 val LoginBack = Color(0xFFBFC1D5)
-val LoginPri = Color(0xFF42CDAC)
+val LoginPri = Color(0xFF00947C)
 val LoginSec = Color(0xFF0E2D50)
-val LoginError = Color(0xFFFF5733)
+val LoginError = Color(0xFFFF1E00)
 val LoginSucess = Color(0xFF28A745)

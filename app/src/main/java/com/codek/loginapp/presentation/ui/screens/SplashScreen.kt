@@ -4,10 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -20,51 +21,47 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.animateLottieCompositionAsState
-import com.airbnb.lottie.compose.rememberLottieComposition
-import com.codek.loginapp.R
+import com.codek.loginapp.presentation.ui.components.loadings.ChasingDots
+import com.codek.loginapp.presentation.ui.components.loadings.ChasingTwoDots
+import com.codek.loginapp.presentation.ui.components.loadings.Circle
+import com.codek.loginapp.presentation.ui.components.loadings.CubeGrid
+import com.codek.loginapp.presentation.ui.components.loadings.DoubleBounce
+import com.codek.loginapp.presentation.ui.components.loadings.FadingCircle
+import com.codek.loginapp.presentation.ui.components.loadings.FoldingCube
+import com.codek.loginapp.presentation.ui.components.loadings.InstaSpinner
+import com.codek.loginapp.presentation.ui.components.loadings.Pulse
+import com.codek.loginapp.presentation.ui.components.loadings.RotatingPlane
+import com.codek.loginapp.presentation.ui.components.loadings.ThreeBounce
+import com.codek.loginapp.presentation.ui.components.loadings.WanderingCubes
+import com.codek.loginapp.presentation.ui.components.loadings.Wave
+import com.codek.loginapp.presentation.ui.theme.LoginPri
+import com.codek.loginapp.presentation.ui.theme.LoginSec
 import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen() {
 
-    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.splash_screen_animation))
-    var isPlaying by remember { mutableStateOf(true) }
     var loadingMessage by remember { mutableStateOf("Carregando...") }
 
-    val progress by animateLottieCompositionAsState(
-        composition = composition,
-        isPlaying = isPlaying,
-        iterations = Int.MAX_VALUE
-    )
-
     LaunchedEffect(Unit) {
-        delay(2000) // Simula a verificação da versão do app
+        delay(5000)
         loadingMessage = "Verificando versão do app"
-        delay(2000) // Simula a autenticação do usuário
+        delay(5000)
         loadingMessage = "Carregamento completo"
-        delay(1000) // Aguarda um pouco antes de mudar de tela
-        // Navegue para a próxima tela aqui
-        // Exemplo: navController.navigate("home")
+        delay(5000)
     }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color(0xFF000000)),
+            .background(color = LoginSec),
         contentAlignment = Alignment.Center
     ) {
         Column (
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ){
-            LottieAnimation(
-                modifier = Modifier.size(300.dp),
-                composition = composition,
-                progress = { progress }
-            )
+            ChasingTwoDots(color = LoginPri)
             Spacer(modifier = Modifier.height(30.dp))
             Text(text = loadingMessage, color = Color.White)
         }
