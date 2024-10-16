@@ -50,7 +50,7 @@ fun LoginScreen(
     val tamCorPri = 410.dp
     val tamCorSec = 200.dp
     val tamQuadro = tamCorPri + tamCorSec
-    val roundedShape = 10.dp
+    val roundedShape = 15.dp
     val animateDuration = 500
 
     var isMovedUp by remember { mutableStateOf(false) }
