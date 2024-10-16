@@ -2,9 +2,7 @@ package com.codek.loginapp.presentation.ui.screens
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.SharedPreferences
 import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -13,48 +11,36 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Password
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -63,11 +49,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.codek.loginapp.R
-import com.codek.loginapp.data.model.Login
-import com.codek.loginapp.data.model.LoginResponse
-import com.codek.loginapp.data.repository.LoginRepository
 import com.codek.loginapp.presentation.states.RegisterUiState
+import com.codek.loginapp.presentation.states.SignInUiState
 import com.codek.loginapp.presentation.ui.actions.ButtonClickAction
 import com.codek.loginapp.presentation.ui.actions.vibrateAction
 import com.codek.loginapp.presentation.ui.components.FooterBar
@@ -78,15 +61,12 @@ import com.codek.loginapp.presentation.ui.components.containsDigit
 import com.codek.loginapp.presentation.ui.components.containsLowerCase
 import com.codek.loginapp.presentation.ui.components.containsSpecialCharacter
 import com.codek.loginapp.presentation.ui.components.containsUpperCase
-import com.codek.loginapp.presentation.ui.theme.LoginBack
 import com.codek.loginapp.presentation.ui.theme.LoginError
 import com.codek.loginapp.presentation.ui.theme.LoginPri
-import com.codek.loginapp.presentation.ui.theme.LoginSec
 import com.codek.loginapp.presentation.ui.theme.LoginSucess
 import com.codek.loginapp.presentation.viewmodel.RegisterViewModel
-import com.google.accompanist.insets.ProvideWindowInsets
-import com.google.accompanist.insets.navigationBarsWithImePadding
-import kotlinx.coroutines.flow.MutableStateFlow
+import com.codek.loginapp.presentation.viewmodel.SignInViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("NewApi")
@@ -95,8 +75,9 @@ fun RegisterScreen(
     viewModel: RegisterViewModel,
     uiState: RegisterUiState,
     onCreateClick: () -> Unit,
-    onBackClick: () -> Unit
+    onBackSignInClick: () -> Unit
 ) {
+
     val context = LocalContext.current
     val buttonClickAction = remember { ButtonClickAction() }
     val focusManager = LocalFocusManager.current
@@ -126,31 +107,18 @@ fun RegisterScreen(
     }
 
     if (showDialog.value) {
-        JanelaDialogo(showDialog, uiState, preferences, onBackClick)
+        JanelaDialogo(showDialog, uiState, preferences, onBackSignInClick)
     }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(LoginBack),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(70.dp))
-        Box {
-            Image(
-                painter = painterResource(id = R.drawable.logo_odonto),
-                contentDescription = "logo",
-                modifier = Modifier
-                    .height(45.dp)
-            )
-        }
-        Spacer(modifier = Modifier.height(15.dp))
         Column(
             modifier = Modifier
-                .fillMaxWidth(0.9f)
+                .fillMaxWidth()
                 .height(200.dp)
                 .background(
-                    color = LoginPri,
+                    color = Color.Transparent,
                     shape = RoundedCornerShape(10.dp, 10.dp, 0.dp, 0.dp)
                 ),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -197,7 +165,7 @@ fun RegisterScreen(
                             onClick = {
                                 if (buttonClickAction.offClick()) {
                                     focusManager.clearFocus()
-                                    onBackClick()
+                                    onBackSignInClick()
                                 }
                             }
                         ),
@@ -217,10 +185,10 @@ fun RegisterScreen(
 
         Column(
             modifier = Modifier
-                .fillMaxWidth(0.9f)
+                .fillMaxWidth()
                 .height(420.dp)
                 .background(
-                    color = LoginSec,
+                    color = Color.Transparent,
                     shape = RoundedCornerShape(0.dp, 0.dp, 10.dp, 10.dp)
                 ),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -392,7 +360,7 @@ fun RegisterScreen(
                 )
                 if (uiState.passwordCharError != null) {
                     Text(
-                        text = uiState.passwordCharError,
+                        text = uiState.passwordCharError!!,
                         color = Color.Red,
                         modifier = Modifier.padding(8.dp)
                     )
@@ -461,7 +429,7 @@ fun RegisterScreen(
                             shape = RoundedCornerShape(100)
                         )
                         .clickable(
-                            enabled = isPasswordValid,
+//                            enabled = isPasswordValid,
                             indication = null,
                             interactionSource = remember { MutableInteractionSource() },
                             onClick = {

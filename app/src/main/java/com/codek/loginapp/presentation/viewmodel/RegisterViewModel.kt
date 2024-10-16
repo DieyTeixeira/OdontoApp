@@ -1,6 +1,7 @@
 package com.codek.loginapp.presentation.viewmodel
 
 import android.content.SharedPreferences
+import android.util.Log
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -72,6 +73,7 @@ class RegisterViewModel(
             val result: LoginResponse = repository.createLogin(loginRequest)
 
             if (result.message != null) {
+                Log.d("LoginViewModel", "Login bem-sucedido: ${result.message}")
                 _signUpIsSucessful.emit(true)
                 _showSaveCredentialsDialog.emit(true)
             } else {
@@ -79,6 +81,7 @@ class RegisterViewModel(
             }
         } catch (e: Exception) {
             showError(e.message?: "Erro ao fazer login")
+            Log.d("LoginViewModel", "Erro ao fazer login: ${e.message}")
         }
     }
 
@@ -131,7 +134,7 @@ class RegisterViewModel(
         val lowerCasePassword = password.lowercase()
 
         return sequences.any { sequence ->
-            if (sequence.length > 2) {
+            if (sequence.length > 3) {
                 (0..sequence.length - 1).any { start ->
                     lowerCasePassword.contains(sequence.substring(start))
                 }

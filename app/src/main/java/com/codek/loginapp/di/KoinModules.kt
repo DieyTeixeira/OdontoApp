@@ -31,6 +31,7 @@ val repositoryModule = module {
     single<LoginRepository> { LoginRepositoryImpl(get()) }
 }
 
+@Suppress("DEPRECATION")
 val appModule = module {
     single {
         androidContext().getSharedPreferences("user_prefs", android.content.Context.MODE_PRIVATE)

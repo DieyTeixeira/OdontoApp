@@ -28,12 +28,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.ColorFilter
 import com.codek.loginapp.R
+import com.codek.loginapp.presentation.ui.theme.LoginPri
 
 // Definição de componente - ** RODAPÉ **
 @Composable
 fun FooterBar(
-//    showDialogVersion: MutableState<Boolean>,
     color: Color
 ){
     val context = LocalContext.current
@@ -55,9 +56,9 @@ fun FooterBar(
                 horizontalArrangement = Arrangement.Center
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.logo_codek_black),
+                    painter = painterResource(id = R.drawable.logo_codek_login),
                     contentDescription = "Logo",
-                    modifier = Modifier.size(30.dp)
+                    modifier = Modifier.size(25.dp)
                 )
                 Spacer(modifier = Modifier.width(5.dp))
                 Text(
@@ -83,10 +84,7 @@ fun FooterBar(
                         color = color,
                         fontSize = 12.sp,
                         fontStyle = FontStyle.Italic
-                    ),
-//                    modifier = Modifier.clickable {
-//                        showDialogVersion.value = true
-//                    }
+                    )
                 )
                 Spacer(modifier = Modifier.width(25.dp))
             }
@@ -97,14 +95,12 @@ fun FooterBar(
 // Visualização
 @Preview
 @Composable
-fun BaseboardPreview(modifier: Modifier = Modifier) {
-    val showDialogVersion = remember { mutableStateOf(false) }
+fun FooterBarPreview(modifier: Modifier = Modifier) {
     Box(
         modifier
             .background(color = Color(0xFF000000))
     ) {
         FooterBar(
-//            showDialogVersion = showDialogVersion,
             color = Color.LightGray)
     }
 }
