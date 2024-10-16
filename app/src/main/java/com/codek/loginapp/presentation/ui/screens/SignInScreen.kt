@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Password
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -42,6 +43,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -88,7 +90,16 @@ fun SignInScreen(
             .background(LoginBack),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(100.dp))
+        Spacer(modifier = Modifier.height(70.dp))
+        Box {
+            Image(
+                painter = painterResource(id = R.drawable.logo_odonto),
+                contentDescription = "logo",
+                modifier = Modifier
+                    .height(45.dp)
+            )
+        }
+        Spacer(modifier = Modifier.height(15.dp))
         Column(
             modifier = Modifier
                 .fillMaxWidth(0.9f)
@@ -114,7 +125,7 @@ fun SignInScreen(
                 ) {
                     MensagemErro(isError, uiStateError)
                 }
-                Spacer(modifier = Modifier.height(15.dp))
+                Spacer(modifier = Modifier.height(25.dp))
                 Text(
                     text = "Acesse Seu Painel de Agendamentos",
                     color = LoginPri,
@@ -173,7 +184,7 @@ fun SignInScreen(
                     shape = RoundedCornerShape(10.dp),
                     leadingIcon = {
                         Icon(
-                            Icons.Outlined.Password,
+                            Icons.Outlined.Lock,
                             contentDescription = "ícone de senha",
                             tint = Color.Gray
                         )
@@ -206,14 +217,14 @@ fun SignInScreen(
                                 Icons.Filled.Visibility,
                                 contentDescription = "ícone de visível",
                                 modifier = trailingIconModifier,
-                                tint = color
+                                tint = Color.Gray
                             )
                         } else {
                             Icon(
                                 Icons.Filled.VisibilityOff,
                                 contentDescription = "ícone de não visível",
                                 modifier = trailingIconModifier,
-                                tint = color
+                                tint = Color.Gray
                             )
                         }
                     },
@@ -231,9 +242,7 @@ fun SignInScreen(
                         modifier = Modifier.padding(8.dp)
                     )
                 }
-
-                Spacer(modifier = Modifier.height(25.dp))
-
+                Spacer(modifier = Modifier.height(20.dp))
                 /***** BOTÕES *****/
                 Box(
                     modifier = Modifier
@@ -250,10 +259,13 @@ fun SignInScreen(
                         text = "Esqueceu sua senha?",
                         color = Color.White,
                         fontSize = 14.sp,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        style = TextStyle(
+                            textDecoration = TextDecoration.Underline
+                        )
                     )
                 }
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(35.dp))
                 Box(
                     modifier = Modifier
                         .width(180.dp)
@@ -300,7 +312,7 @@ fun SignInScreen(
                     .padding(10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(modifier = Modifier.height(30.dp))
+                Spacer(modifier = Modifier.height(25.dp))
                 Text(
                     text = "Olá, Amigo!",
                     color = Color.White,

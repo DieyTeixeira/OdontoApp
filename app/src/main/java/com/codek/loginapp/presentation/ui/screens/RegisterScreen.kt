@@ -23,12 +23,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Visibility
+import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -80,6 +84,8 @@ import com.codek.loginapp.presentation.ui.theme.LoginPri
 import com.codek.loginapp.presentation.ui.theme.LoginSec
 import com.codek.loginapp.presentation.ui.theme.LoginSucess
 import com.codek.loginapp.presentation.viewmodel.RegisterViewModel
+import com.google.accompanist.insets.ProvideWindowInsets
+import com.google.accompanist.insets.navigationBarsWithImePadding
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -129,7 +135,16 @@ fun RegisterScreen(
             .background(LoginBack),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(100.dp))
+        Spacer(modifier = Modifier.height(70.dp))
+        Box {
+            Image(
+                painter = painterResource(id = R.drawable.logo_odonto),
+                contentDescription = "logo",
+                modifier = Modifier
+                    .height(45.dp)
+            )
+        }
+        Spacer(modifier = Modifier.height(15.dp))
         Column(
             modifier = Modifier
                 .fillMaxWidth(0.9f)
@@ -146,7 +161,7 @@ fun RegisterScreen(
                     .padding(10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(modifier = Modifier.height(30.dp))
+                Spacer(modifier = Modifier.height(20.dp))
                 Text(
                     text = "Bem-Vindo!",
                     color = Color.White,
@@ -324,7 +339,7 @@ fun RegisterScreen(
                     shape = RoundedCornerShape(10.dp),
                     leadingIcon = {
                         Icon(
-                            Icons.Filled.Password,
+                            Icons.Outlined.Lock,
                             contentDescription = "ícone de senha",
                             tint = Color.Gray
                         )
@@ -354,17 +369,17 @@ fun RegisterScreen(
                         }
                         if (uiState.isShowPassword) {
                             Icon(
-                                Icons.Filled.Visibility,
+                                Icons.Outlined.Visibility,
                                 contentDescription = "ícone de visível",
                                 modifier = trailingIconModifier,
-                                tint = Color.White
+                                tint = Color.Gray
                             )
                         } else {
                             Icon(
-                                Icons.Filled.VisibilityOff,
+                                Icons.Outlined.VisibilityOff,
                                 contentDescription = "ícone de não visível",
                                 modifier = trailingIconModifier,
-                                tint = Color.White
+                                tint = Color.Gray
                             )
                         }
                     },

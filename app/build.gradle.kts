@@ -43,6 +43,7 @@ android {
 dependencies {
 
     // implementation
+    implementation(libs.accompanist.insets)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
