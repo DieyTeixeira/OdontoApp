@@ -35,7 +35,8 @@ import com.codek.loginapp.presentation.ui.theme.LoginPri
 // Definição de componente - ** RODAPÉ **
 @Composable
 fun FooterBar(
-    color: Color
+    color: Color,
+    modifier: Modifier = Modifier
 ){
     val context = LocalContext.current
 
@@ -101,6 +102,7 @@ fun FooterBarPreview(modifier: Modifier = Modifier) {
             .background(color = Color(0xFF000000))
     ) {
         FooterBar(
-            color = Color.LightGray)
+            color = Color.LightGray
+        )
     }
 }

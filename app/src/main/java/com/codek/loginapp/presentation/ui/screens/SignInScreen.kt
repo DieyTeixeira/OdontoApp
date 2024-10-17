@@ -37,11 +37,15 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.codek.loginapp.presentation.states.SignInUiState
 import com.codek.loginapp.presentation.ui.actions.ButtonClickAction
+import com.codek.loginapp.presentation.ui.components.ButtonBorder
+import com.codek.loginapp.presentation.ui.components.ButtonFilled
+import com.codek.loginapp.presentation.ui.components.ButtonText
 import com.codek.loginapp.presentation.ui.components.MensagemErro
 import com.codek.loginapp.presentation.ui.theme.LoginPri
 import com.codek.loginapp.presentation.viewmodel.SignInViewModel
@@ -55,8 +59,6 @@ fun SignInScreen(
     onSignInClick: () -> Unit,
     onGoRegisterClick: () -> Unit
 ) {
-    val buttonClickAction = remember { ButtonClickAction() }
-    val focusManager = LocalFocusManager.current
 
     val isError = uiState.error != null
     val uiStateError = uiState.error ?: ""
@@ -218,56 +220,17 @@ fun SignInScreen(
                 }
                 Spacer(modifier = Modifier.height(20.dp))
                 /***** BOTÕES *****/
-                Box(
-                    modifier = Modifier
-                        .width(180.dp)
-                        .height(30.dp)
-                        .clickable(
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() },
-                            onClick = { /*BOTÃO DE ESQUECEU A SENHA*/ }
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "Esqueceu sua senha?",
-                        color = Color.White,
-                        fontSize = 14.sp,
-                        textAlign = TextAlign.Center,
-                        style = TextStyle(
-                            textDecoration = TextDecoration.Underline
-                        )
-                    )
-                }
+                ButtonText(
+                    textButton = "Esqueceu sua senha?",
+                    colorText = Color.White,
+                    onClick = {}
+                )
                 Spacer(modifier = Modifier.height(35.dp))
-                Box(
-                    modifier = Modifier
-                        .width(180.dp)
-                        .height(30.dp)
-                        .background(
-                            color = LoginPri,
-                            shape = RoundedCornerShape(100)
-                        )
-                        .clickable(
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() },
-                            onClick = {
-                                if (buttonClickAction.offClick()) {
-                                    focusManager.clearFocus()
-                                    onSignInClick()
-                                }
-                            }
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "ENTRAR",
-                        color = Color.White,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center
-                    )
-                }
+                ButtonFilled(
+                    textButton = "ENTRAR",
+                    colorButton = LoginPri,
+                    onClick = onSignInClick
+                )
             }
         }
         Column(
@@ -303,39 +266,11 @@ fun SignInScreen(
                     textAlign = TextAlign.Center
                 )
                 Spacer(modifier = Modifier.height(15.dp))
-                Box(
-                    modifier = Modifier
-                        .width(180.dp)
-                        .height(30.dp)
-                        .background(
-                            color = Color.Transparent,
-                            shape = RoundedCornerShape(100)
-                        )
-                        .border(
-                            width = 1.dp,
-                            color = Color.White,
-                            shape = RoundedCornerShape(15.dp)
-                        )
-                        .clickable(
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() },
-                            onClick = {
-                                if (buttonClickAction.offClick()) {
-                                    focusManager.clearFocus()
-                                    onGoRegisterClick()
-                                }
-                            }
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "INSCREVER-SE",
-                        color = Color.White,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center
-                    )
-                }
+                ButtonBorder(
+                    textButton = "INSCREVER-SE",
+                    colorBorder = Color.White,
+                    onClick = onGoRegisterClick
+                )
             }
         }
     }

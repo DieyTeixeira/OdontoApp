@@ -8,13 +8,19 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,6 +42,7 @@ import com.codek.loginapp.presentation.ui.theme.LoginSec
 import com.codek.loginapp.presentation.viewmodel.RegisterViewModel
 import com.codek.loginapp.presentation.viewmodel.SignInViewModel
 
+@OptIn(ExperimentalLayoutApi::class)
 @SuppressLint("UseOfNonLambdaOffsetOverload")
 @Composable
 fun LoginScreen(
@@ -67,76 +74,89 @@ fun LoginScreen(
         animationSpec = tween(animateDuration)
     )
 
-    Column(
+    val imeVisible = WindowInsets.isImeVisible
+
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(LoginBack),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .background(LoginBack)
     ) {
-        Spacer(modifier = Modifier.height(75.dp))
-        Box {
-            Image(
-                painter = painterResource(id = R.drawable.logo_odonto),
-                contentDescription = "logo",
-                modifier = Modifier
-                    .height(50.dp)
-            )
-        }
-        Spacer(modifier = Modifier.height(15.dp))
-        Box {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(0.9f)
-                    .height(tamQuadro)
-                    .background(
-                        color = LoginSec,
-                        shape = RoundedCornerShape(roundedShape)
-                    )
-            ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = if (imeVisible) 100.dp else 0.dp), // Elevação quando o teclado abre
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Bottom
+        ) {
+            Spacer(modifier = Modifier.height(75.dp))
+            Box {
+                Image(
+                    painter = painterResource(id = R.drawable.logo_odonto),
+                    contentDescription = "logo",
+                    modifier = Modifier
+                        .height(50.dp)
+                )
+            }
+            Spacer(modifier = Modifier.height(15.dp))
+            Box {
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .offset(y = offsetY)
-                        .height(tamCorSec)
+                        .fillMaxWidth(0.9f)
+                        .height(tamQuadro)
                         .background(
-                            color = LoginPri,
-                            shape = RoundedCornerShape(
-                                roundedShapeUp,
-                                roundedShapeUp,
-                                roundedShapeDown,
-                                roundedShapeDown
-                            )
+                            color = LoginSec,
+                            shape = RoundedCornerShape(roundedShape)
                         )
-                )
-                this@Column.AnimatedVisibility(
-                    visible = !isMovedUp,
-                    enter = fadeIn(animationSpec = tween(animateDuration + 200)),
-                    exit = fadeOut(animationSpec = tween(animateDuration - 100))
                 ) {
-                    SignInScreen(
-                        viewModel = viewModelSignIn,
-                        uiState = uiStateSignIn,
-                        onSignInClick = onSignInClick,
-                        onGoRegisterClick = { isMovedUp = !isMovedUp }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .offset(y = offsetY)
+                            .height(tamCorSec)
+                            .background(
+                                color = LoginPri,
+                                shape = RoundedCornerShape(
+                                    roundedShapeUp,
+                                    roundedShapeUp,
+                                    roundedShapeDown,
+                                    roundedShapeDown
+                                )
+                            )
                     )
-                }
-                this@Column.AnimatedVisibility(
-                    visible = isMovedUp,
-                    enter = fadeIn(animationSpec = tween(animateDuration + 200)),
-                    exit = fadeOut(animationSpec = tween(animateDuration - 100))
-                ) {
-                    RegisterScreen(
-                        viewModel = viewModelRegister,
-                        uiState = uiStateRegister,
-                        onCreateClick = onCreateClick,
-                        onBackSignInClick = { isMovedUp = !isMovedUp }
-                    )
+                    this@Column.AnimatedVisibility(
+                        visible = !isMovedUp,
+                        enter = fadeIn(animationSpec = tween(animateDuration + 200)),
+                        exit = fadeOut(animationSpec = tween(animateDuration - 100))
+                    ) {
+                        SignInScreen(
+                            viewModel = viewModelSignIn,
+                            uiState = uiStateSignIn,
+                            onSignInClick = onSignInClick,
+                            onGoRegisterClick = { isMovedUp = !isMovedUp }
+                        )
+                    }
+                    this@Column.AnimatedVisibility(
+                        visible = isMovedUp,
+                        enter = fadeIn(animationSpec = tween(animateDuration + 200)),
+                        exit = fadeOut(animationSpec = tween(animateDuration - 100))
+                    ) {
+                        RegisterScreen(
+                            viewModel = viewModelRegister,
+                            uiState = uiStateRegister,
+                            onCreateClick = onCreateClick,
+                            onBackSignInClick = { isMovedUp = !isMovedUp }
+                        )
+                    }
                 }
             }
         }
     }
 
     /***** RODAPÉ *****/
-    FooterBar(color = Color.LightGray)
+    FooterBar(
+        color = Color.LightGray,
+        modifier = Modifier
+            .imePadding()
+    )
 
 }

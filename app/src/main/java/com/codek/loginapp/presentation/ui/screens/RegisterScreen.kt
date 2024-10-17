@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -31,12 +30,11 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -45,14 +43,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.codek.loginapp.presentation.states.RegisterUiState
-import com.codek.loginapp.presentation.states.SignInUiState
 import com.codek.loginapp.presentation.ui.actions.ButtonClickAction
 import com.codek.loginapp.presentation.ui.actions.vibrateAction
+import com.codek.loginapp.presentation.ui.components.ButtonBorder
+import com.codek.loginapp.presentation.ui.components.ButtonFilled
 import com.codek.loginapp.presentation.ui.components.FooterBar
 import com.codek.loginapp.presentation.ui.components.JanelaDialogo
 import com.codek.loginapp.presentation.ui.components.MensagemErro
@@ -65,8 +62,6 @@ import com.codek.loginapp.presentation.ui.theme.LoginError
 import com.codek.loginapp.presentation.ui.theme.LoginPri
 import com.codek.loginapp.presentation.ui.theme.LoginSucess
 import com.codek.loginapp.presentation.viewmodel.RegisterViewModel
-import com.codek.loginapp.presentation.viewmodel.SignInViewModel
-import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("NewApi")
@@ -79,8 +74,6 @@ fun RegisterScreen(
 ) {
 
     val context = LocalContext.current
-    val buttonClickAction = remember { ButtonClickAction() }
-    val focusManager = LocalFocusManager.current
     val password = uiState.password
     val showDialog = remember { mutableStateOf(false) }
     val preferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
@@ -146,39 +139,11 @@ fun RegisterScreen(
                     textAlign = TextAlign.Center
                 )
                 Spacer(modifier = Modifier.height(15.dp))
-                Box(
-                    modifier = Modifier
-                        .width(180.dp)
-                        .height(30.dp)
-                        .background(
-                            color = Color.Transparent,
-                            shape = RoundedCornerShape(100)
-                        )
-                        .border(
-                            width = 1.dp,
-                            color = Color.White,
-                            shape = RoundedCornerShape(15.dp)
-                        )
-                        .clickable(
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() },
-                            onClick = {
-                                if (buttonClickAction.offClick()) {
-                                    focusManager.clearFocus()
-                                    onBackSignInClick()
-                                }
-                            }
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "ENTRAR",
-                        color = Color.White,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center
-                    )
-                }
+                ButtonBorder(
+                    textButton = "ENTRAR",
+                    colorBorder = Color.White,
+                    onClick = onBackSignInClick
+                )
             }
             Spacer(modifier = Modifier.height(20.dp))
         }
@@ -420,41 +385,13 @@ fun RegisterScreen(
                 Spacer(modifier = Modifier.height(20.dp))
 
                 /***** BOTÕES *****/
-                Box(
-                    modifier = Modifier
-                        .width(180.dp)
-                        .height(30.dp)
-                        .background(
-                            color = LoginPri,
-                            shape = RoundedCornerShape(100)
-                        )
-                        .clickable(
-//                            enabled = isPasswordValid,
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() },
-                            onClick = {
-                                if (buttonClickAction.offClick()) {
-                                    focusManager.clearFocus()
-                                    onCreateClick()
-                                }
-                            }
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "REGISTRAR-SE",
-                        color = Color.White,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center
-                    )
-                }
+                ButtonFilled(
+                    textButton = "REGISTRAR-SE",
+                    colorButton = LoginPri,
+                    onClick = onCreateClick
+                )
                 Spacer(modifier = Modifier.height(20.dp))
             }
         }
-
-        /***** RODAPÉ *****/
-        FooterBar(color = Color.LightGray)
-
     }
 }
