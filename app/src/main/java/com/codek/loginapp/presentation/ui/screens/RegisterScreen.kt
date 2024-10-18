@@ -87,20 +87,16 @@ fun RegisterScreen(
     val isError = uiState.error != null
     val uiStateError = uiState.error ?: ""
 
-    LaunchedEffect(isError) {
-        if (isError) {
-            vibrateAction(context)
-        }
-    }
+//    LaunchedEffect(isError) {
+//        if (isError) {
+//            vibrateAction(context)
+//        }
+//    }
 
     LaunchedEffect(Unit) {
         viewModel.showSaveCredentialsDialog.collect { insertValue ->
             showDialog.value = insertValue
         }
-    }
-
-    if (showDialog.value) {
-        JanelaDialogo(showDialog, uiState, preferences, onBackSignInClick)
     }
 
     Column(
@@ -142,7 +138,10 @@ fun RegisterScreen(
                 ButtonBorder(
                     textButton = "ENTRAR",
                     colorBorder = Color.White,
-                    onClick = onBackSignInClick
+                    onClick = {
+                        onBackSignInClick()
+                        viewModel.clearFields()
+                    }
                 )
             }
             Spacer(modifier = Modifier.height(20.dp))
@@ -211,7 +210,7 @@ fun RegisterScreen(
                     },
                     modifier = Modifier
                         .fillMaxWidth(0.9f)
-                        .height(45.dp),
+                        .height(48.dp),
                     colors = TextFieldDefaults.colors(
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
@@ -249,7 +248,7 @@ fun RegisterScreen(
                     },
                     modifier = Modifier
                         .fillMaxWidth(0.9f)
-                        .height(45.dp),
+                        .height(48.dp),
                     colors = TextFieldDefaults.colors(
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
@@ -287,7 +286,7 @@ fun RegisterScreen(
                     },
                     modifier = Modifier
                         .fillMaxWidth(0.9f)
-                        .height(45.dp),
+                        .height(48.dp),
                     colors = TextFieldDefaults.colors(
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
@@ -392,6 +391,27 @@ fun RegisterScreen(
                 )
                 Spacer(modifier = Modifier.height(20.dp))
             }
+        }
+
+        if (showDialog.value) {
+            JanelaDialogo(
+                onSimClick = {
+                    preferences.edit()
+                        .putString("email", uiState.email)
+                        .putString("password", uiState.password)
+                        .putBoolean("isLoggedIn", false)
+                        .apply()
+                    showDialog.value = false
+                    viewModel.clearFields()
+                    onBackSignInClick()
+                    Log.d("RegisterScreen", "Salvo com sucesso ${uiState.email} - ${uiState.password}")
+                },
+                onNaoClick = {
+                    showDialog.value = false
+                    viewModel.clearFields()
+                    onBackSignInClick()
+                }
+            )
         }
     }
 }

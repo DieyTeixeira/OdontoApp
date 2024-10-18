@@ -61,50 +61,62 @@ class RegisterViewModel(
     }
 
     suspend fun register() {
+        val nome = _uiState.value.nome
         val email = _uiState.value.email
         val senha = _uiState.value.password
 
+        if (!validateField(nome.isEmpty(), "Por favor, insira seu nome.")) return
         if (!validateField(email.isEmpty(), "Por favor, insira seu email.")) return
         if (!validateField(!Patterns.EMAIL_ADDRESS.matcher(email).matches(), "Formato de email inválido.")) return
-        if (!validateField(!containsSequentialChars(senha), "A senha não pode conter sequências\ncomo '12345' ou 'abcdef'.")) return
+//        if (!validateField(!containsSequentialChars(senha), "A senha não pode conter sequências\ncomo '12345' ou 'abcdef'.")) return
 
         try {
-            val loginRequest = Login(email = email, senha = senha)
-            val result: LoginResponse = repository.createLogin(loginRequest)
+            val loginRequest = Login(nome = nome, email = email, senha = senha)
+            val response = repository.createLogin(loginRequest)
 
-            if (result.message != null) {
-                Log.d("LoginViewModel", "Login bem-sucedido: ${result.message}")
-                _signUpIsSucessful.emit(true)
-                _showSaveCredentialsDialog.emit(true)
+            val message = response.body()?.message
+
+            if (response.isSuccessful) {
+                when (response.code()) {
+                    201 -> {
+                        _signUpIsSucessful.emit(true)
+                        _showSaveCredentialsDialog.emit(true)
+                        Log.d("LoginViewModel", "Sucesso 201: ${response.body()?.message}")
+                    }
+                    else -> {
+                        _signUpIsSucessful.emit(false)
+                        message?.let { showError(it) }
+                        Log.d("LoginViewModel", "Erro inesperado: ${response.body()?.message}")
+                    }
+                }
             } else {
-                showError("Erro ao fazer login")
+                when (response.code()) {
+                    400 -> {
+                        _signUpIsSucessful.emit(false)
+                        message?.let { showError(it) }
+                        Log.d("LoginViewModel", "Erro 400: ${response.errorBody()?.string()}")
+                    }
+                    402 -> {
+                        _signUpIsSucessful.emit(false)
+                        message?.let { showError(it) }
+                        Log.d("LoginViewModel", "Erro 402: ${response.errorBody()?.string()}")
+                    }
+                    422 -> {
+                        _signUpIsSucessful.emit(false)
+                        message?.let { showError(it) }
+                        Log.d("LoginViewModel", "Erro 422: ${response.errorBody()?.string()}")
+                    }
+                    else -> {
+                        _signUpIsSucessful.emit(false)
+                        message?.let { showError(it) }
+                        Log.d("LoginViewModel", "Erro inesperado: ${response.errorBody()?.string()}")
+                    }
+                }
             }
         } catch (e: Exception) {
-            showError(e.message?: "Erro ao fazer login")
-            Log.d("LoginViewModel", "Erro ao fazer login: ${e.message}")
-        }
-    }
-
-    suspend fun insertName(
-        nome: String
-    ) {
-        val id = preferences.getInt("userId", 0)
-
-        try {
-            val loginRequest = Login(nome = nome)
-            val result: LoginResponse = repository.updateName(id, loginRequest)
-
-            if (result.message == "Usuário alterado com sucesso!") {
-                showError(result.message)
-                _uiState.update { it.copy(nome = result.message) }
-                preferences.edit()
-                    .putString("nome", nome)
-                    .apply()
-            } else {
-                showError("Erro ao fazer login")
-            }
-        } catch (e: Exception) {
-            showError(e.message?: "Erro ao fazer login")
+            _signUpIsSucessful.emit(false)
+            showError("Erro: ${e.message}")
+            Log.d("LoginViewModel", "Erro desconhecido: ${e.message}")
         }
     }
 
@@ -125,24 +137,23 @@ class RegisterViewModel(
         }
     }
 
-    fun containsSequentialChars(password: String): Boolean {
-        val sequences = listOf(
-            "123456789",
-            "abcdefghijklmnopqrstuvwxyz"
-        )
-
-        val lowerCasePassword = password.lowercase()
-
-        return sequences.any { sequence ->
-            if (sequence.length > 3) {
-                (0..sequence.length - 1).any { start ->
-                    lowerCasePassword.contains(sequence.substring(start))
-                }
-            } else {
-                false
-            }
-        }
-    }
+//    fun containsSequentialChars(password: String): Boolean {
+//        val sequences = listOf(
+//            "123456789",
+//            "abcdefghijklmnopqrstuvwxyz"
+//        )
+//
+//        val lowerCasePassword = password.lowercase()
+//
+//        return sequences.any { sequence ->
+//            (0..sequence.length - 3).any { start ->
+//                val subSequence = sequence.substring(start, start + 3)
+//                lowerCasePassword.windowed(3).any { window ->
+//                    window == subSequence
+//                }
+//            }
+//        }
+//    }
 
     fun loadSavedCredentials() {
         val savedEmail = preferences.getString("email", null)
@@ -155,5 +166,13 @@ class RegisterViewModel(
         if (savedPassword != null) {
             _password.value = savedPassword
         }
+    }
+
+    fun clearFields() {
+        _uiState.value = uiState.value.copy(
+            nome = "",
+            email = "",
+            password = ""
+        )
     }
 }

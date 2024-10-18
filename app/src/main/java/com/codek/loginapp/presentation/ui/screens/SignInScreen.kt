@@ -18,16 +18,22 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
@@ -46,6 +52,7 @@ import com.codek.loginapp.presentation.ui.actions.ButtonClickAction
 import com.codek.loginapp.presentation.ui.components.ButtonBorder
 import com.codek.loginapp.presentation.ui.components.ButtonFilled
 import com.codek.loginapp.presentation.ui.components.ButtonText
+import com.codek.loginapp.presentation.ui.components.CredentialsDialogUse
 import com.codek.loginapp.presentation.ui.components.MensagemErro
 import com.codek.loginapp.presentation.ui.theme.LoginPri
 import com.codek.loginapp.presentation.viewmodel.SignInViewModel
@@ -62,6 +69,7 @@ fun SignInScreen(
 
     val isError = uiState.error != null
     val uiStateError = uiState.error ?: ""
+    var dialogCredentials by remember { mutableStateOf(false) }
 
 //    LaunchedEffect(isError) {
 //        if (isError) {
@@ -69,8 +77,8 @@ fun SignInScreen(
 //        }
 //    }
 
-    LaunchedEffect(Unit) {
-        viewModel.checkSavedCredentials()
+    LaunchedEffect(uiState.showCredentialsDialog) {
+        dialogCredentials = true
     }
 
     Column(
@@ -137,7 +145,7 @@ fun SignInScreen(
                     },
                     modifier = Modifier
                         .fillMaxWidth(0.9f)
-                        .height(45.dp),
+                        .height(48.dp),
                     colors = TextFieldDefaults.colors(
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
@@ -175,7 +183,7 @@ fun SignInScreen(
                     },
                     modifier = Modifier
                         .fillMaxWidth(0.9f)
-                        .height(45.dp),
+                        .height(48.dp),
                     colors = TextFieldDefaults.colors(
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
@@ -269,9 +277,26 @@ fun SignInScreen(
                 ButtonBorder(
                     textButton = "INSCREVER-SE",
                     colorBorder = Color.White,
-                    onClick = onGoRegisterClick
+                    onClick = {
+                        onGoRegisterClick()
+                        viewModel.clearFields()
+                    }
                 )
             }
+        }
+
+        if (dialogCredentials) {
+            CredentialsDialogUse(
+                onSimClick = {
+                    viewModel.useSavedCredentials()
+                    uiState.showCredentialsDialog = false
+                    dialogCredentials = false
+                },
+                onNaoClick = {
+                    uiState.showCredentialsDialog = false
+                    dialogCredentials = false
+                }
+            )
         }
     }
 }

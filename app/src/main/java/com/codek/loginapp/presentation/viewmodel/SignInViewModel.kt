@@ -131,7 +131,7 @@ class SignInViewModel(
             val hasSavedCredentials = verifySavedCredentials()
 
             if (hasSavedCredentials) {
-                _useCredentials.emit(true)
+                _showCredentialsDialog.value = true
             }
         }
     }
@@ -140,5 +140,24 @@ class SignInViewModel(
         val savedEmail = preferences.getString("email", null)
         val savedPassword = preferences.getString("password", null)
         return savedEmail != null && savedPassword != null
+    }
+
+    fun useSavedCredentials() {
+        val savedEmail = preferences.getString("email", "") ?: ""
+        val savedPassword = preferences.getString("password", "") ?: ""
+        _uiState.update {
+            it.copy(email = savedEmail, password = savedPassword)
+        }
+    }
+
+    fun dismissCredentialsDialog() {
+        _showCredentialsDialog.value = false
+    }
+
+    fun clearFields() {
+        _uiState.value = uiState.value.copy(
+            email = "",
+            password = ""
+        )
     }
 }

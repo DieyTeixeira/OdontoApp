@@ -74,8 +74,6 @@ fun LoginScreen(
         animationSpec = tween(animateDuration)
     )
 
-    val imeVisible = WindowInsets.isImeVisible
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -83,8 +81,7 @@ fun LoginScreen(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = if (imeVisible) 100.dp else 0.dp), // Elevação quando o teclado abre
+                .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Bottom
         ) {
@@ -153,10 +150,6 @@ fun LoginScreen(
     }
 
     /***** RODAPÉ *****/
-    FooterBar(
-        color = Color.LightGray,
-        modifier = Modifier
-            .imePadding()
-    )
+    FooterBar(color = Color.LightGray)
 
 }

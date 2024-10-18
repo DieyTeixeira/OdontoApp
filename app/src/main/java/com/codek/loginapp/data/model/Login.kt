@@ -13,5 +13,6 @@ data class Login(
 data class LoginResponse(
     val erro: String?,
     val message: String?,
-    val validado: Boolean?
+    val validado: Boolean?,
+    val statusCode: Int?
 )
