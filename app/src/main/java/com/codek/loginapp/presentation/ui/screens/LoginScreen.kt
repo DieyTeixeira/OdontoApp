@@ -74,6 +74,8 @@ fun LoginScreen(
         animationSpec = tween(animateDuration)
     )
 
+
+
     Box(
         modifier = Modifier
             .fillMaxSize()

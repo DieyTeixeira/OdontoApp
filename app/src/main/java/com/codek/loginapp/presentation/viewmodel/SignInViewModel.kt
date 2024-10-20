@@ -136,7 +136,7 @@ class SignInViewModel(
         }
     }
 
-    private fun verifySavedCredentials(): Boolean {
+    fun verifySavedCredentials(): Boolean {
         val savedEmail = preferences.getString("email", null)
         val savedPassword = preferences.getString("password", null)
         return savedEmail != null && savedPassword != null
@@ -159,5 +159,21 @@ class SignInViewModel(
             email = "",
             password = ""
         )
+    }
+
+    fun clearCredentials() {
+        preferences.edit()
+            .remove("email")
+            .remove("password")
+            .apply()
+        clearFields()
+    }
+
+    fun getSavedEmail(): String {
+        return preferences.getString("email", "") ?: ""
+    }
+
+    fun getSavedPassword(): String {
+        return preferences.getString("password", "") ?: ""
     }
 }

@@ -39,6 +39,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.codek.loginapp.R
 import com.codek.loginapp.presentation.states.RegisterUiState
 import com.codek.loginapp.presentation.ui.theme.LoginError
@@ -49,26 +50,20 @@ import com.codek.loginapp.presentation.viewmodel.RegisterViewModel
 @Composable
 fun JanelaDialogo(
     onSimClick: () -> Unit,
-    onNaoClick: () -> Unit
+    onNaoClick: () -> Unit,
+    onDismissRequest: () -> Unit
 ) {
     val uiState = RegisterUiState()
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0x80000000)) // Fundo semitransparente para simular um diálogo
-            .clickable(
-                onClick = { /* Evita fechar o dialogo ao clicar fora */ },
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            )
+    Dialog(
+        onDismissRequest = { onDismissRequest() }
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.Center)
-                .background(color = Color.Transparent)
-                .padding(25.dp)
+                .background(color = Color.Transparent),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Título
             Box(
@@ -130,7 +125,7 @@ fun JanelaDialogo(
                     modifier = Modifier
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
-                ){
+                ) {
                     Spacer(modifier = Modifier.width(15.dp))
                     Icon(
                         Icons.Outlined.CrisisAlert,
@@ -219,32 +214,27 @@ fun JanelaDialogo(
 private fun JanelaDialogoPreview() {
     JanelaDialogo(
         onSimClick = {},
-        onNaoClick = {}
+        onNaoClick = {},
+        onDismissRequest = {}
     )
 }
 
 @Composable
 fun CredentialsDialogUse(
     onSimClick: () -> Unit,
-    onNaoClick: () -> Unit
+    onNaoClick: () -> Unit,
+    onDismissRequest: () -> Unit
 ){
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0x80000000)) // Fundo semitransparente para simular um diálogo
-            .clickable(
-                onClick = { /* Evita fechar o dialogo ao clicar fora */ },
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            )
+    Dialog(
+        onDismissRequest = { onDismissRequest() }
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.Center)
-                .background(color = Color.Transparent)
-                .padding(25.dp)
+                .background(color = Color.Transparent),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Pergunta ao usuário
             Column(
@@ -336,6 +326,7 @@ fun CredentialsDialogUse(
 private fun CredentialsDialogPreview() {
     CredentialsDialogUse(
         onSimClick = {},
-        onNaoClick = {}
+        onNaoClick = {},
+        onDismissRequest = {}
     )
 }

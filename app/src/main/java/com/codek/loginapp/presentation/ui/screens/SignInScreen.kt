@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -49,6 +50,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.codek.loginapp.presentation.states.SignInUiState
 import com.codek.loginapp.presentation.ui.actions.ButtonClickAction
+import com.codek.loginapp.presentation.ui.actions.vibrateAction
 import com.codek.loginapp.presentation.ui.components.ButtonBorder
 import com.codek.loginapp.presentation.ui.components.ButtonFilled
 import com.codek.loginapp.presentation.ui.components.ButtonText
@@ -67,18 +69,39 @@ fun SignInScreen(
     onGoRegisterClick: () -> Unit
 ) {
 
+    val context = LocalContext.current
     val isError = uiState.error != null
     val uiStateError = uiState.error ?: ""
     var dialogCredentials by remember { mutableStateOf(false) }
 
-//    LaunchedEffect(isError) {
-//        if (isError) {
-//            vibrateAction(context)
-//        }
-//    }
+    LaunchedEffect(isError) {
+        if (isError) {
+            vibrateAction(context)
+        }
+    }
 
     LaunchedEffect(uiState.showCredentialsDialog) {
         dialogCredentials = true
+    }
+
+    if (dialogCredentials) {
+        CredentialsDialogUse(
+            onSimClick = {
+                viewModel.useSavedCredentials()
+                viewModel.dismissCredentialsDialog()
+                dialogCredentials = false
+            },
+            onNaoClick = {
+                viewModel.dismissCredentialsDialog()
+                viewModel.clearFields()
+                viewModel.clearCredentials()
+                dialogCredentials = false
+            },
+            onDismissRequest = {
+                viewModel.dismissCredentialsDialog()
+                dialogCredentials = false
+            }
+        )
     }
 
     Column(
@@ -283,20 +306,6 @@ fun SignInScreen(
                     }
                 )
             }
-        }
-
-        if (dialogCredentials) {
-            CredentialsDialogUse(
-                onSimClick = {
-                    viewModel.useSavedCredentials()
-                    uiState.showCredentialsDialog = false
-                    dialogCredentials = false
-                },
-                onNaoClick = {
-                    uiState.showCredentialsDialog = false
-                    dialogCredentials = false
-                }
-            )
         }
     }
 }
