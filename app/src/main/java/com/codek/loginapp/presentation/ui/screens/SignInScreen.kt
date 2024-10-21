@@ -1,6 +1,7 @@
 package com.codek.loginapp.presentation.ui.screens
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -54,7 +55,6 @@ import com.codek.loginapp.presentation.ui.actions.vibrateAction
 import com.codek.loginapp.presentation.ui.components.ButtonBorder
 import com.codek.loginapp.presentation.ui.components.ButtonFilled
 import com.codek.loginapp.presentation.ui.components.ButtonText
-import com.codek.loginapp.presentation.ui.components.CredentialsDialogUse
 import com.codek.loginapp.presentation.ui.components.MensagemErro
 import com.codek.loginapp.presentation.ui.theme.LoginPri
 import com.codek.loginapp.presentation.viewmodel.SignInViewModel
@@ -72,36 +72,11 @@ fun SignInScreen(
     val context = LocalContext.current
     val isError = uiState.error != null
     val uiStateError = uiState.error ?: ""
-    var dialogCredentials by remember { mutableStateOf(false) }
 
     LaunchedEffect(isError) {
         if (isError) {
             vibrateAction(context)
         }
-    }
-
-    LaunchedEffect(uiState.showCredentialsDialog) {
-        dialogCredentials = true
-    }
-
-    if (dialogCredentials) {
-        CredentialsDialogUse(
-            onSimClick = {
-                viewModel.useSavedCredentials()
-                viewModel.dismissCredentialsDialog()
-                dialogCredentials = false
-            },
-            onNaoClick = {
-                viewModel.dismissCredentialsDialog()
-                viewModel.clearFields()
-                viewModel.clearCredentials()
-                dialogCredentials = false
-            },
-            onDismissRequest = {
-                viewModel.dismissCredentialsDialog()
-                dialogCredentials = false
-            }
-        )
     }
 
     Column(

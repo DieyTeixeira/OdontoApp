@@ -24,37 +24,21 @@ class RegisterViewModel(
 
     private val _uiState = MutableStateFlow(RegisterUiState())
     val uiState = _uiState.asStateFlow()
-    private val _email = MutableStateFlow("")
-    private val _password = MutableStateFlow("")
 
     private val _signUpIsSucessful = MutableSharedFlow<Boolean>()
     val signInIsSucessful = _signUpIsSucessful.asSharedFlow()
 
-    private val _showSaveCredentialsDialog = MutableSharedFlow<Boolean>()
-    val showSaveCredentialsDialog = _showSaveCredentialsDialog.asSharedFlow()
+    private val _showSaveCredentialsDialog = MutableStateFlow(false)
+    val showSaveCredentialsDialog = _showSaveCredentialsDialog.asStateFlow()
 
     init {
         _uiState.update { currentState ->
             currentState.copy(
-                onNameChange = { nome ->
-                    _uiState.update {
-                        it.copy(nome = nome)
-                    }
-                },
-                onEmailChange = { user ->
-                    _uiState.update {
-                        it.copy(email = user)
-                    }
-                },
-                onPasswordChange = { password ->
-                    _uiState.update {
-                        it.copy(password = password)
-                    }
-                },
+                onNameChange = { nome -> _uiState.update { it.copy(nome = nome) } },
+                onEmailChange = { user -> _uiState.update {it.copy(email = user) } },
+                onPasswordChange = { password -> _uiState.update { it.copy(password = password) } },
                 onTogglePasswordVisibility = {
-                    _uiState.update {
-                        it.copy(isShowPassword = !_uiState.value.isShowPassword)
-                    }
+                    _uiState.update { it.copy(isShowPassword = !_uiState.value.isShowPassword) }
                 }
             )
         }
@@ -68,7 +52,6 @@ class RegisterViewModel(
         if (!validateField(nome.isEmpty(), "Por favor, insira seu nome.")) return
         if (!validateField(email.isEmpty(), "Por favor, insira seu email.")) return
         if (!validateField(!Patterns.EMAIL_ADDRESS.matcher(email).matches(), "Formato de email inválido.")) return
-//        if (!validateField(!containsSequentialChars(senha), "A senha não pode conter sequências\ncomo '12345' ou 'abcdef'.")) return
 
         try {
             val loginRequest = Login(nome = nome, email = email, senha = senha)
@@ -76,47 +59,16 @@ class RegisterViewModel(
 
             val message = response.body()?.message
 
-            if (response.isSuccessful) {
-                when (response.code()) {
-                    201 -> {
-                        _signUpIsSucessful.emit(true)
-                        _showSaveCredentialsDialog.emit(true)
-                        Log.d("LoginViewModel", "Sucesso 201: ${response.body()?.message}")
-                    }
-                    else -> {
-                        _signUpIsSucessful.emit(false)
-                        message?.let { showError(it) }
-                        Log.d("LoginViewModel", "Erro inesperado: ${response.body()?.message}")
-                    }
-                }
+            if (response.isSuccessful && response.code() == 201) {
+                _signUpIsSucessful.emit(true)
+                _showSaveCredentialsDialog.value = true
             } else {
-                when (response.code()) {
-                    400 -> {
-                        _signUpIsSucessful.emit(false)
-                        message?.let { showError(it) }
-                        Log.d("LoginViewModel", "Erro 400: ${response.errorBody()?.string()}")
-                    }
-                    402 -> {
-                        _signUpIsSucessful.emit(false)
-                        message?.let { showError(it) }
-                        Log.d("LoginViewModel", "Erro 402: ${response.errorBody()?.string()}")
-                    }
-                    422 -> {
-                        _signUpIsSucessful.emit(false)
-                        message?.let { showError(it) }
-                        Log.d("LoginViewModel", "Erro 422: ${response.errorBody()?.string()}")
-                    }
-                    else -> {
-                        _signUpIsSucessful.emit(false)
-                        message?.let { showError(it) }
-                        Log.d("LoginViewModel", "Erro inesperado: ${response.errorBody()?.string()}")
-                    }
-                }
+                _signUpIsSucessful.emit(false)
+                message?.let { showError(it) }
             }
         } catch (e: Exception) {
             _signUpIsSucessful.emit(false)
             showError("Erro: ${e.message}")
-            Log.d("LoginViewModel", "Erro desconhecido: ${e.message}")
         }
     }
 
@@ -137,35 +89,11 @@ class RegisterViewModel(
         }
     }
 
-//    fun containsSequentialChars(password: String): Boolean {
-//        val sequences = listOf(
-//            "123456789",
-//            "abcdefghijklmnopqrstuvwxyz"
-//        )
-//
-//        val lowerCasePassword = password.lowercase()
-//
-//        return sequences.any { sequence ->
-//            (0..sequence.length - 3).any { start ->
-//                val subSequence = sequence.substring(start, start + 3)
-//                lowerCasePassword.windowed(3).any { window ->
-//                    window == subSequence
-//                }
-//            }
-//        }
-//    }
-
-    fun loadSavedCredentials() {
-        val savedEmail = preferences.getString("email", null)
-        val savedPassword = preferences.getString("password", null)
-
-        if (savedEmail != null) {
-            _email.value = savedEmail
-        }
-
-        if (savedPassword != null) {
-            _password.value = savedPassword
-        }
+    fun saveCredentials() {
+        preferences.edit()
+            .putString("email", _uiState.value.email)
+            .putString("password", _uiState.value.password)
+            .apply()
     }
 
     fun clearFields() {

@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.CrisisAlert
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.AlertDialog
@@ -49,11 +50,10 @@ import com.codek.loginapp.presentation.viewmodel.RegisterViewModel
 
 @Composable
 fun JanelaDialogo(
-    onSimClick: () -> Unit,
-    onNaoClick: () -> Unit,
+    email: String,
+    onOkClick: () -> Unit,
     onDismissRequest: () -> Unit
 ) {
-    val uiState = RegisterUiState()
 
     Dialog(
         onDismissRequest = { onDismissRequest() }
@@ -114,7 +114,7 @@ fun JanelaDialogo(
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    text = uiState.email,
+                    text = email,
                     color = Color.Black,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
@@ -126,83 +126,55 @@ fun JanelaDialogo(
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Spacer(modifier = Modifier.width(15.dp))
                     Icon(
                         Icons.Outlined.CrisisAlert,
                         contentDescription = "check",
                         tint = LoginError,
                         modifier = Modifier
-                            .size(35.dp)
+                            .size(45.dp)
                     )
                     Spacer(modifier = Modifier.width(15.dp))
                     Text(
-                        text = "Para ter acesso a sua conta, é preciso confirmar o email.",
+                        text = "É necessário fazer a confirmação de email para ter acesso a sua conta.",
                         fontStyle = FontStyle.Italic,
                         color = Color.Black,
                         fontSize = 14.sp
                     )
                 }
             }
-
-            Spacer(modifier = Modifier.height(15.dp))
-
-            // Pergunta ao usuário
-            Column(
-                modifier = Modifier
-                    .background(
-                        color = Color.White,
-                        shape = RoundedCornerShape(20.dp)
-                    )
-                    .padding(20.dp)
+            Spacer(modifier = Modifier.height(25.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
             ) {
-                Text(
-                    text = "Deseja salvar o email e a senha para preenchimento automático na tela de login?",
-                    fontSize = 14.sp,
-                    color = Color.Black
-                )
-
-                Spacer(modifier = Modifier.height(30.dp))
-
-                // Botões de confirmação e negação
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
+                Box(
+                    modifier = Modifier
+                        .height(30.dp)
+                        .width(30.dp)
+                        .background(
+                            color = Color.LightGray,
+                            shape = RoundedCornerShape(100)
+                        )
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) {
+                            onOkClick()
+                        },
+                    contentAlignment = Alignment.Center
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .height(35.dp)
-                            .width(80.dp)
-                            .background(
-                                color = Color.Gray,
-                                shape = RoundedCornerShape(100)
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        TextButton(
-                            onClick = { onNaoClick() }
-                        ) {
-                            Text(text = "Não", color = Color.White)
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    Box(
-                        modifier = Modifier
-                            .height(35.dp)
-                            .width(80.dp)
-                            .background(
-                                color = Color.Gray,
-                                shape = RoundedCornerShape(100)
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        TextButton(
-                            onClick = { onSimClick() }
-                        ) {
-                            Text(text = "Sim", color = Color.White)
-                        }
-                    }
+                    Icon(
+                        Icons.Outlined.Close,
+                        contentDescription = "check",
+                        tint = Color.Black,
+//                            modifier = Modifier
+//                                .size(45.dp)
+                    )
+//                        TextButton(
+//                            onClick = { onOkClick() }
+//                        ) {
+//                            Text(text = "OK", color = Color.Black)
+//                        }
                 }
             }
         }
@@ -213,120 +185,8 @@ fun JanelaDialogo(
 @Composable
 private fun JanelaDialogoPreview() {
     JanelaDialogo(
-        onSimClick = {},
-        onNaoClick = {},
-        onDismissRequest = {}
-    )
-}
-
-@Composable
-fun CredentialsDialogUse(
-    onSimClick: () -> Unit,
-    onNaoClick: () -> Unit,
-    onDismissRequest: () -> Unit
-){
-
-    Dialog(
-        onDismissRequest = { onDismissRequest() }
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(color = Color.Transparent),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Pergunta ao usuário
-            Column(
-                modifier = Modifier
-                    .background(
-                        color = Color.White,
-                        shape = RoundedCornerShape(20.dp)
-                    )
-                    .padding(20.dp)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-
-                    Icon(
-                        Icons.Outlined.CrisisAlert,
-                        contentDescription = "check",
-                        tint = LoginPri,
-                        modifier = Modifier
-                            .size(35.dp)
-                    )
-                    Spacer(modifier = Modifier.width(15.dp))
-                    Text (
-                        text = "Usar credenciais salvas?",
-                        fontSize = 18.sp,
-                        color = Color.Black
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(24.dp))
-                Text(
-                    text = "Deseja utilizar o e-mail e senha salvos?",
-                    fontSize = 14.sp,
-                    color = Color.Black
-                )
-
-                Spacer(modifier = Modifier.height(30.dp))
-
-                // Botões de confirmação e negação
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .height(35.dp)
-                            .width(80.dp)
-                            .background(
-                                color = Color.Gray,
-                                shape = RoundedCornerShape(100)
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        TextButton(
-                            onClick = { onNaoClick() }
-                        ) {
-                            Text(text = "Não", color = Color.White)
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    Box(
-                        modifier = Modifier
-                            .height(35.dp)
-                            .width(80.dp)
-                            .background(
-                                color = Color.Gray,
-                                shape = RoundedCornerShape(100)
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        TextButton(
-                            onClick = { onSimClick() }
-                        ) {
-                            Text(text = "Sim", color = Color.White)
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun CredentialsDialogPreview() {
-    CredentialsDialogUse(
-        onSimClick = {},
-        onNaoClick = {},
+        email = "william.henry@example-store.com",
+        onOkClick = {},
         onDismissRequest = {}
     )
 }

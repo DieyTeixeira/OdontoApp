@@ -76,7 +76,6 @@ fun RegisterScreen(
     val context = LocalContext.current
     val password = uiState.password
     val showDialog = remember { mutableStateOf(false) }
-    val preferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
 
     val isPasswordValid = password.length >= 8 &&
             containsUpperCase(password) &&
@@ -101,23 +100,14 @@ fun RegisterScreen(
 
     if (showDialog.value) {
         JanelaDialogo(
-            onSimClick = {
-                preferences.edit()
-                    .putString("email", uiState.email)
-                    .putString("password", uiState.password)
-                    .putBoolean("isLoggedIn", false)
-                    .apply()
-                showDialog.value = false
+            email = uiState.email,
+            onOkClick = {
                 viewModel.clearFields()
-                onBackSignInClick()
-                Log.d("RegisterScreen", "Salvo com sucesso ${uiState.email} - ${uiState.password}")
-            },
-            onNaoClick = {
                 showDialog.value = false
-                viewModel.clearFields()
                 onBackSignInClick()
             },
             onDismissRequest = {
+                viewModel.clearFields()
                 showDialog.value = false
             }
         )

@@ -3,6 +3,9 @@ package com.codek.loginapp.presentation.viewmodel
 import android.content.SharedPreferences
 import android.util.Log
 import android.util.Patterns
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codek.loginapp.data.model.Login
@@ -31,30 +34,16 @@ class SignInViewModel(
     private val _resultId = MutableStateFlow<Int?>(null)
     val resultId = _resultId.asStateFlow()
 
-    private val _showCredentialsDialog = MutableStateFlow(false)
-    val showCredentialsDialog: StateFlow<Boolean> = _showCredentialsDialog
-
     private val _useCredentials = MutableSharedFlow<Boolean>()
     val useCredentials = _useCredentials.asSharedFlow()
-
 
     init {
         _uiState.update { currentState ->
             currentState.copy(
-                onEmailChange = { user ->
-                    _uiState.update {
-                        it.copy(email = user)
-                    }
-                },
-                onPasswordChange = { password ->
-                    _uiState.update {
-                        it.copy(password = password)
-                    }
-                },
+                onEmailChange = { user -> _uiState.update { it.copy(email = user) } },
+                onPasswordChange = { password -> _uiState.update { it.copy(password = password) } },
                 onTogglePasswordVisibility = {
-                    _uiState.update {
-                        it.copy(isShowPassword = !_uiState.value.isShowPassword)
-                    }
+                    _uiState.update { it.copy(isShowPassword = !_uiState.value.isShowPassword) }
                 }
             )
         }
@@ -110,7 +99,6 @@ class SignInViewModel(
 
     private fun showError(message: String) {
         _uiState.update { it.copy(error = message) }
-        Log.d("LoginViewModel", "signIn: $message")
         viewModelScope.launch {
             delay(3000)
             _uiState.update { it.copy(error = null) }
@@ -126,54 +114,12 @@ class SignInViewModel(
         }
     }
 
-    fun checkSavedCredentials() {
-        viewModelScope.launch {
-            val hasSavedCredentials = verifySavedCredentials()
-
-            if (hasSavedCredentials) {
-                _showCredentialsDialog.value = true
-            }
-        }
-    }
-
-    fun verifySavedCredentials(): Boolean {
-        val savedEmail = preferences.getString("email", null)
-        val savedPassword = preferences.getString("password", null)
-        return savedEmail != null && savedPassword != null
-    }
-
-    fun useSavedCredentials() {
-        val savedEmail = preferences.getString("email", "") ?: ""
-        val savedPassword = preferences.getString("password", "") ?: ""
-        _uiState.update {
-            it.copy(email = savedEmail, password = savedPassword)
-        }
-    }
-
-    fun dismissCredentialsDialog() {
-        _showCredentialsDialog.value = false
-    }
-
     fun clearFields() {
-        _uiState.value = uiState.value.copy(
-            email = "",
-            password = ""
-        )
-    }
-
-    fun clearCredentials() {
-        preferences.edit()
-            .remove("email")
-            .remove("password")
-            .apply()
-        clearFields()
-    }
-
-    fun getSavedEmail(): String {
-        return preferences.getString("email", "") ?: ""
-    }
-
-    fun getSavedPassword(): String {
-        return preferences.getString("password", "") ?: ""
+        _uiState.update {
+            it.copy(
+                email = "",
+                password = ""
+            )
+        }
     }
 }
