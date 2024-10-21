@@ -10,10 +10,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.codek.loginapp.presentation.navigation.loginScreen
-import com.codek.loginapp.presentation.navigation.splashScreen
-import com.codek.loginapp.presentation.navigation.telaScreen
-import com.codek.loginapp.presentation.ui.theme.LoginAppTheme
+import com.codek.loginapp.login.presentation.navigation.loginScreen
+import com.codek.loginapp.login.presentation.navigation.splashScreen
+import com.codek.loginapp.login.presentation.navigation.telaScreen
+import com.codek.loginapp.login.presentation.ui.theme.LoginAppTheme
 import kotlinx.coroutines.delay
 
 sealed class Screen(val route: String) {
