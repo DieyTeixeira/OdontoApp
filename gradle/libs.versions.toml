@@ -1,7 +1,7 @@
 [versions]
 accompanistInsets = "0.28.0"
 agp = "8.8.0-alpha07"
-animation = "1.7.3"
+animation = "1.7.4"
 datastorePreferences = "1.1.1"
 kotlin = "2.0.0"
 coreKtx = "1.13.1"

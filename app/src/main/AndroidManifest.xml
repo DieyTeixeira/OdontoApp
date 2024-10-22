@@ -14,12 +14,12 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/icone_odonto_minimal"
         android:supportsRtl="true"
-        android:theme="@style/Theme.LoginApp"
+        android:theme="@style/Theme.OdontoApp"
         tools:targetApi="31">
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.LoginApp">
+            android:theme="@style/Theme.OdontoApp">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

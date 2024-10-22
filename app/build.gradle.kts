@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.codek.loginapp"
+    namespace = "com.codek.odontoapp"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.codek.loginapp"
+        applicationId = "com.codek.odontoapp"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
